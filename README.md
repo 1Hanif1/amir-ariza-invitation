@@ -13,7 +13,7 @@ Requires Node 22 or newer.
 | `npm run build` | Type-checks, then builds the site into `dist/` |
 | `npm run preview` | Serves the built site locally |
 
-To publish, upload the `dist/` folder to any static host.
+To publish, upload the `dist/` folder to any static host. Netlify builds from `netlify.toml` when connected to the GitHub repository. For a manual Netlify upload, drag in the `dist/` folder, not the project folder.
 
 ## Before sharing the link
 
