@@ -1,0 +1,92 @@
+---
+import { celebrationsIntro, events } from '../../data/wedding';
+import type { ArtName } from '../../data/assets';
+import Art from '../decorative/Art.astro';
+import EventSection from './EventSection.astro';
+
+// The Reception has no lily of its own: its pair stands in the garden below it.
+const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
+  { lily: 'lily-haldi', side: 'start' },
+  { lily: 'lily-nikah', side: 'end' },
+  { side: 'start' },
+];
+---
+
+<section id="celebrations" class="celebrations cusped-top" aria-labelledby="celebrations-title">
+  <header class="celebrations__intro" data-reveal>
+    <h2 id="celebrations-title" class="celebrations__title serif">The<br />Celebrations</h2>
+    <p class="celebrations__lede">{celebrationsIntro}</p>
+    <Art name="marigold-spray" class="celebrations__spray" />
+  </header>
+
+  {events.map((event, index) => <EventSection event={event} {...chapters[index]} />)}
+
+  <div class="reception-garden" aria-hidden="true">
+    <Art name="lily-reception-left" class="reception-garden__lily" />
+    <Art name="lily-reception-right" class="reception-garden__lily" />
+  </div>
+</section>
+
+<style>
+  .celebrations {
+    --cusp-colour: var(--color-parchment);
+    position: relative;
+    z-index: 2;
+    overflow-x: clip;
+    background: var(--color-parchment);
+  }
+
+  .celebrations__intro {
+    position: relative;
+    max-width: 75rem;
+    margin-inline: auto;
+    padding: 3.5rem 1.25rem 2rem;
+  }
+
+  .celebrations__title {
+    margin: 0;
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.015em;
+  }
+
+  .celebrations__lede {
+    margin: 0.875rem 0 0;
+    font-size: 1.125rem;
+    color: var(--color-ink-soft);
+  }
+
+  .celebrations__spray {
+    position: absolute;
+    top: 1.5rem;
+    right: -2.5rem;
+    width: clamp(10.5rem, 42vw, 25rem);
+    pointer-events: none;
+  }
+
+  .reception-garden {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    background: var(--color-burgundy);
+    overflow: clip;
+  }
+
+  .reception-garden__lily {
+    display: block;
+    width: 50%;
+    max-width: 38rem;
+  }
+
+  @media (min-width: 48rem) {
+    .celebrations__intro {
+      padding: 6rem 2.5rem 4rem;
+    }
+
+    .celebrations__spray {
+      top: 3rem;
+      right: 2rem;
+    }
+  }
+</style>

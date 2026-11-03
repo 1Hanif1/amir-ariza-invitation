@@ -1,0 +1,65 @@
+---
+import { couple } from '../../data/wedding';
+import Art from '../decorative/Art.astro';
+import FloralDivider from '../decorative/FloralDivider.astro';
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <Art name="lily-crown" class="footer__crown" />
+    <Art name="aa-monogram" class="footer__monogram" />
+    <p class="footer__names serif">{couple.groom.full} <span>&amp;</span> {couple.bride.full}</p>
+    <p class="footer__date">
+      <time datetime={couple.date.iso}>{couple.date.display}</time>
+    </p>
+    <FloralDivider />
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    z-index: 4;
+    background: var(--color-beige);
+    text-align: center;
+    --divider-space: 1.5rem 0 0;
+  }
+
+  .footer__inner {
+    position: relative;
+    padding: 2.5rem 1.5rem 3rem;
+    border-top: 2px solid var(--color-burgundy);
+  }
+
+  /* Cut off by the footer's top line, so the lily grows out of it into the blessing above. */
+  .footer__crown {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: min(44rem, 100%);
+    max-width: none;
+    transform: translateX(-50%);
+  }
+
+  .footer__monogram {
+    width: 6rem;
+    margin-inline: auto;
+  }
+
+  .footer__names {
+    margin: 1rem auto 0;
+    max-width: 32rem;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .footer__names span {
+    font-style: italic;
+  }
+
+  .footer__date {
+    margin: 0.5rem 0 0;
+    color: var(--color-ink-soft);
+  }
+</style>

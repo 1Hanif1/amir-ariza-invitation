@@ -1,0 +1,255 @@
+---
+import { bismillah, invitation } from '../../data/wedding';
+import Art from '../decorative/Art.astro';
+import FloralDivider from '../decorative/FloralDivider.astro';
+---
+
+<section id="invitation" class="invite" aria-labelledby="invitation-title">
+  <h2 id="invitation-title" class="sr-only">The Invitation</h2>
+
+  <Art name="vine-left" class="invite__vine invite__vine--left" />
+  <Art name="vine-right" class="invite__vine invite__vine--right" />
+
+  <div class="invite__page">
+    <div class="invite__opening" data-reveal>
+      <p class="invite__arabic" lang="ar" dir="rtl">{bismillah.arabic}</p>
+      <p class="invite__name-of serif">{bismillah.english}</p>
+      <p class="invite__invocation">{invitation.invocation}</p>
+    </div>
+
+    <FloralDivider />
+
+    <div class="invite__host" data-reveal>
+      <p class="invite__small">{invitation.host.honorific}</p>
+      <p class="invite__host-name serif">{invitation.host.name}</p>
+      <p class="invite__small">{invitation.host.place}</p>
+    </div>
+
+    <div class="invite__request" data-reveal>
+      <p class="invite__small">{invitation.request}</p>
+      <p class="invite__occasion serif">
+        {invitation.occasion.name} <span class="invite__occasion-detail">{invitation.occasion.detail}</span>
+      </p>
+      <p class="invite__small">{invitation.relation}</p>
+    </div>
+
+    <div class="invite__couple" data-reveal>
+      <div class="invite__person invite__person--groom">
+        <p class="invite__person-name serif">{invitation.groom.name}</p>
+        <p class="invite__small">{invitation.groom.parents}</p>
+      </div>
+      <p class="invite__joiner serif">{invitation.joiner}</p>
+      <div class="invite__person invite__person--bride">
+        <p class="invite__person-name serif">{invitation.bride.name}</p>
+        <p class="invite__small">{invitation.bride.parents}</p>
+      </div>
+    </div>
+
+    <div class="invite__when" data-reveal>
+      <p class="invite__insha serif">{invitation.blessingWord}</p>
+      <p class="invite__date serif">{invitation.date}</p>
+      <p class="invite__small">({invitation.hijri})</p>
+      <p class="invite__dinner">{invitation.dinner}</p>
+    </div>
+
+    <FloralDivider />
+
+    <div class="invite__foot" data-reveal>
+      <div>
+        <p class="invite__small">{invitation.venueLabel}</p>
+        <p class="invite__foot-name serif">{invitation.venue.name}</p>
+        <p class="invite__small">{invitation.venue.address}</p>
+      </div>
+      <div>
+        <p class="invite__small">{invitation.compliments.label}</p>
+        {invitation.compliments.from.map((line) => <p class="invite__foot-name serif">{line}</p>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .invite {
+    position: relative;
+    z-index: 1;
+  }
+
+  .invite__page {
+    width: var(--arch-width);
+    margin-inline: auto;
+    padding: clamp(3.5rem, 9vw, 6.5rem) 1.75rem clamp(5rem, 11vw, 8rem);
+    text-align: center;
+  }
+
+  .invite p {
+    margin: 0;
+  }
+
+  /* Margin vines, in the space beside the arch. Only shown where that space exists. */
+  .invite__vine {
+    display: none;
+    position: absolute;
+    top: 4rem;
+    width: auto;
+    height: calc(100% - 8rem);
+    max-width: none;
+    object-fit: contain;
+  }
+
+  .invite__opening {
+    max-width: 38rem;
+    margin-inline: auto;
+  }
+
+  /* The Bismillah has the most room on the page: nothing decorative sits near it. */
+  .invite .invite__arabic {
+    font-family: var(--font-arabic);
+    font-size: clamp(2rem, 6.5vw, 3.25rem);
+    line-height: 1.9;
+    color: var(--color-ink);
+  }
+
+  .invite .invite__name-of {
+    margin-top: 1.25rem;
+    font-size: clamp(1.375rem, 3vw, 1.75rem);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .invite .invite__invocation {
+    margin-top: 0.875rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+    text-wrap: balance;
+  }
+
+  .invite__small {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+    text-wrap: balance;
+  }
+
+  .invite__host-name {
+    font-size: clamp(1.625rem, 3.6vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.15;
+    margin-block: 0.25rem !important;
+    text-wrap: balance;
+  }
+
+  .invite__request {
+    margin-top: 2.5rem;
+  }
+
+  .invite__occasion {
+    margin-block: 0.5rem !important;
+    font-size: clamp(2.25rem, 7vw, 4.25rem);
+    font-style: italic;
+    line-height: 1.04;
+    color: var(--color-burgundy);
+    text-wrap: balance;
+  }
+
+  .invite__occasion-detail {
+    white-space: nowrap;
+  }
+
+  .invite__couple {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .invite__person-name {
+    font-size: clamp(2rem, 5.2vw, 3.125rem);
+    font-weight: 600;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  .invite__person .invite__small {
+    margin-top: 0.375rem;
+  }
+
+  .invite__joiner {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--color-saffron-ink);
+  }
+
+  .invite__when {
+    margin-top: 3rem;
+  }
+
+  .invite__insha {
+    font-size: 1.75rem;
+    font-style: italic;
+    line-height: 1.2;
+    color: var(--color-teal-ink);
+  }
+
+  .invite__date {
+    margin-block: 0.25rem !important;
+    font-size: clamp(1.5rem, 3.6vw, 2.125rem);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .invite .invite__dinner {
+    margin-top: 0.5rem;
+    font-weight: 500;
+  }
+
+  .invite__foot {
+    display: grid;
+    gap: 1.75rem;
+    max-width: 38rem;
+    margin-inline: auto;
+  }
+
+  .invite__foot-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  @media (min-width: 48rem) {
+    .invite__page {
+      padding-inline: clamp(4rem, 9vw, 7.5rem);
+    }
+
+    /* Her name answers his across the page: a step away from the centred card. */
+    .invite__person--groom {
+      text-align: left;
+    }
+
+    .invite__person--bride {
+      text-align: right;
+    }
+
+    .invite__joiner {
+      margin-block: -0.25rem;
+    }
+
+    .invite__foot {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 84rem) {
+    .invite__vine {
+      display: block;
+    }
+
+    .invite__vine--left {
+      left: calc((100vw - var(--arch-width)) / 2 - 11.5rem);
+    }
+
+    .invite__vine--right {
+      right: calc((100vw - var(--arch-width)) / 2 - 11.5rem);
+    }
+  }
+</style>

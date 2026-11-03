@@ -1,0 +1,110 @@
+---
+import { navigation } from '../../data/wedding';
+import Art from '../decorative/Art.astro';
+---
+
+<a href="#celebrations" class="skip">Skip to event details</a>
+
+<header class="nav">
+  <nav aria-label="Main" class="nav__inner">
+    <a href="#home" class="nav__mark" aria-label="Amir and Ariza, back to top" tabindex="-1">
+      <Art name="aa-monogram" class="nav__monogram" eager />
+    </a>
+    <ul class="nav__links">
+      {
+        navigation.map((item) => (
+          <li>
+            <a href={item.href} data-nav-link class="nav__link">
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .skip {
+    position: absolute;
+    left: 0.5rem;
+    top: -4rem;
+    z-index: 60;
+    padding: 0.5rem 1rem;
+    background: var(--color-burgundy);
+    color: var(--color-ivory);
+  }
+
+  .skip:focus {
+    top: 0.5rem;
+  }
+
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--nav-height);
+    background: color-mix(in srgb, var(--color-parchment) 94%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-width: 75rem;
+    margin-inline: auto;
+    padding-inline: 0.5rem;
+  }
+
+  .nav__mark {
+    display: none;
+  }
+
+  .nav__links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.125rem;
+  }
+
+  /* Four words fit on one line on the narrowest phones, so no menu needs opening. */
+  .nav__link {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: clamp(0.4rem, 2.2vw, 1rem);
+    font-size: clamp(0.8125rem, 3.5vw, 0.9375rem);
+    text-decoration: none;
+    color: var(--color-ink);
+    background-image: linear-gradient(var(--color-burgundy), var(--color-burgundy));
+    background-repeat: no-repeat;
+    background-position: 50% 80%;
+    background-size: 0 1px;
+    transition: background-size 250ms ease;
+  }
+
+  .nav__link:hover,
+  .nav__link[aria-current] {
+    background-size: calc(100% - 2 * clamp(0.4rem, 2.2vw, 1rem)) 1px;
+  }
+
+  @media (min-width: 48rem) {
+    .nav__inner {
+      justify-content: space-between;
+      padding-inline: 1.5rem;
+    }
+
+    .nav__mark {
+      display: block;
+    }
+
+    .nav__monogram {
+      display: block;
+      width: auto;
+      height: 2.5rem;
+    }
+  }
+</style>

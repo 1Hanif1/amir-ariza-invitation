@@ -1,0 +1,107 @@
+---
+/**
+ * The album's cusped Mughal arch. It rises behind the hero and its legs run on
+ * through the invitation, so the two sections read as one doorway. The parent
+ * clips it at the section's end.
+ *
+ * Generated rather than drawn so its rulings stay crisp at any width.
+ */
+
+const WIDTH = 1000;
+const HEIGHT = 8000;
+const SPRING = 560;
+const LOBES = 7;
+const TIP_RISE = 36;
+
+type Point = [number, number];
+
+/** Points along one half of a two-centred pointed arch, from its tip to the spring line. */
+function crownPoints(inset: number, side: 'left' | 'right'): Point[] {
+  const halfSpan = WIDTH / 2 - inset;
+  const apexY = 10 + TIP_RISE + inset * 1.25;
+  const rise = SPRING - apexY;
+  const radius = (halfSpan * halfSpan + rise * rise) / (2 * halfSpan);
+  const centreOffset = radius - halfSpan;
+  const apexAngle = Math.atan2(rise, centreOffset);
+
+  const points = Array.from({ length: LOBES + 1 }, (_, index): Point => {
+    if (index === 0) return [WIDTH / 2, apexY - TIP_RISE];
+    const angle = apexAngle + ((Math.PI - apexAngle) * index) / LOBES;
+    const x = inset + radius + Math.cos(angle) * radius;
+    const y = SPRING - Math.sin(angle) * radius;
+    return [Number((side === 'left' ? x : WIDTH - x).toFixed(1)), Number(y.toFixed(1))];
+  });
+  return points;
+}
+
+/** The concave curve that draws the crown up to its ogee point. */
+function tipControl([tipX]: Point, [nextX, nextY]: Point) {
+  return `${(tipX + (nextX - tipX) * 0.22).toFixed(1)} ${nextY}`;
+}
+
+function lobe(from: Point, to: Point, sweep: number) {
+  const chord = Math.hypot(to[0] - from[0], to[1] - from[1]);
+  const radius = (chord * 0.62).toFixed(1);
+  return `A${radius} ${radius} 0 0 ${sweep} ${to[0]} ${to[1]}`;
+}
+
+/** One side of the arch, from the tip down to the foot of the leg. */
+function sidePath(inset: number, side: 'left' | 'right') {
+  const points = crownPoints(inset, side);
+  const outward = side === 'left' ? 0 : 1;
+  let path = `M${points[0][0]} ${points[0][1]}Q${tipControl(points[0], points[1])} ${points[1][0]} ${points[1][1]}`;
+  for (let index = 2; index < points.length; index += 1) {
+    path += lobe(points[index - 1], points[index], outward);
+  }
+  return `${path}V${HEIGHT}`;
+}
+
+/** The arch opening as a closed shape. */
+function openingPath(inset: number) {
+  const points = crownPoints(inset, 'right');
+  let path = `${sidePath(inset, 'left')}H${WIDTH - inset}V${points[LOBES][1]}`;
+  // Walking back up the right side, so each lobe's sweep is reversed.
+  for (let index = LOBES - 1; index >= 1; index -= 1) {
+    path += lobe(points[index + 1], points[index], 0);
+  }
+  return `${path}Q${tipControl(points[0], points[1])} ${points[0][0]} ${points[0][1]}Z`;
+}
+
+const rulings = [
+  { inset: 4, colour: 'var(--color-teal)', width: 3 },
+  { inset: 18, colour: 'var(--color-saffron)', width: 8 },
+  { inset: 32, colour: 'var(--color-burgundy)', width: 2 },
+];
+---
+
+<svg
+  class="arch"
+  viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+  aria-hidden="true"
+  focusable="false"
+  preserveAspectRatio="xMidYMin meet"
+>
+  <path class="arch-fill" d={openingPath(4)} fill="var(--color-ivory)"></path>
+  {
+    rulings.map(({ inset, colour, width }) => (
+      <g fill="none" stroke={colour} stroke-width={width}>
+        <path class="arch-ruling" pathLength="1" d={sidePath(inset, 'left')} />
+        <path class="arch-ruling" pathLength="1" d={sidePath(inset, 'right')} />
+      </g>
+    ))
+  }
+</svg>
+
+<style>
+  .arch {
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    width: var(--arch-width);
+    height: auto;
+    overflow: visible;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>

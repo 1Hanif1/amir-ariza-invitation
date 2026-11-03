@@ -1,0 +1,430 @@
+---
+import type { WeddingEvent } from '../../data/wedding';
+import { directionsUrl } from '../../data/wedding';
+import type { ArtName } from '../../data/assets';
+import Art from '../decorative/Art.astro';
+
+interface Props {
+  event: WeddingEvent;
+  lily?: ArtName;
+  /** Which edge of the screen the chapter's lily grows from. */
+  side: 'start' | 'end';
+}
+
+const { event, lily, side } = Astro.props;
+---
+
+<article id={event.id} class:list={['chapter', `chapter--${side}`, `chapter--${event.colourway}`]} aria-labelledby={`${event.id}-title`}>
+  <div class="chapter__head">
+    {lily && <Art name={lily} class="chapter__lily" />}
+    <p class="chapter__date serif">
+      {event.blessingWord && <span class="chapter__blessing-word">{event.blessingWord}</span>}
+      <time datetime={event.isoDate}>
+        <span class="chapter__day">{event.day}</span>
+        <span class="chapter__date-text">
+          <span class="chapter__weekday">{event.weekday}</span>
+          <span>{event.monthYear}</span>
+          {event.hijri && <span class="chapter__hijri">{event.hijri}</span>}
+        </span>
+      </time>
+    </p>
+  </div>
+
+  <div class="chapter__body" data-reveal>
+    <p class="chapter__city">{event.city}</p>
+    <h3 id={`${event.id}-title`} class="chapter__title serif">
+      {event.name}
+      {event.nameDetail && <span class="chapter__title-detail">{event.nameDetail}</span>}
+    </h3>
+    <p class="chapter__wording">{event.wording}</p>
+
+    {
+      event.programme && (
+        <div class="programme">
+          <p class="programme__intro">{event.programme.intro}</p>
+          <ol class="programme__stem">
+            {event.programme.items.map((item) => (
+              <li class="programme__item">
+                <span class="programme__time serif">{item.time}</span>
+                <Art name="blossom" class="programme__blossom" />
+                <span class="programme__label serif">{item.label}</span>
+              </li>
+            ))}
+          </ol>
+          <p class="programme__closing serif">{event.programme.closing}</p>
+        </div>
+      )
+    }
+
+    {
+      event.time && (
+        <p class="chapter__time serif">
+          {event.time.label && <span class="chapter__time-label">{event.time.label}</span>}
+          {event.time.value}
+        </p>
+      )
+    }
+
+    <div class="chapter__venue">
+      <p class="chapter__venue-name serif">{event.venue.name}</p>
+      <address class="chapter__address">
+        {event.venue.address.map((line) => <span>{line}</span>)}
+      </address>
+      <a class="chapter__directions" href={directionsUrl(event.venue.mapsDestination)} target="_blank" rel="noopener noreferrer">
+        Get directions<span class="sr-only"> to {event.venue.name} on Google Maps (opens in a new tab)</span>
+      </a>
+    </div>
+
+    {event.host && <p class="chapter__host serif">{event.host}</p>}
+  </div>
+</article>
+
+<style>
+  .chapter {
+    --accent: var(--color-burgundy);
+    position: relative;
+    scroll-margin-top: var(--nav-height);
+  }
+
+  .chapter--saffron {
+    --accent: var(--color-saffron-ink);
+    --rule: var(--color-saffron);
+  }
+
+  .chapter--iris {
+    --accent: var(--color-teal-ink);
+    --rule: var(--color-teal);
+  }
+
+  /* The lily is cut off along its lower edge by this line, so it grows from the ground. */
+  .chapter__head {
+    position: relative;
+    overflow: clip;
+    display: flex;
+    align-items: flex-start;
+    min-height: clamp(11.5rem, 50vw, 19rem);
+    padding: 1.5rem 1.25rem 1rem;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  .chapter--start .chapter__head {
+    justify-content: flex-end;
+  }
+
+  .chapter__lily {
+    position: absolute;
+    bottom: 0;
+    width: clamp(15rem, 62vw, 27rem);
+    max-width: none;
+  }
+
+  .chapter--start .chapter__lily {
+    left: 0;
+  }
+
+  .chapter--end .chapter__lily {
+    right: 0;
+  }
+
+  .chapter__date {
+    position: relative;
+    margin: 0;
+    color: var(--accent);
+  }
+
+  .chapter__date time {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chapter--start .chapter__date time {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .chapter__day {
+    font-size: clamp(6rem, 27vw, 15rem);
+    line-height: 0.8;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+
+  .chapter__date-text {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5rem;
+    font-size: 1.1875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+
+  .chapter__hijri {
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .chapter__body {
+    padding: 1.75rem 1.25rem 3.5rem;
+    max-width: 34rem;
+  }
+
+  .chapter__body p {
+    margin: 0;
+  }
+
+  .chapter__city {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-ink-soft);
+  }
+
+  .chapter__title {
+    margin: 0.125rem 0 0;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.04;
+    color: var(--accent);
+    text-wrap: balance;
+  }
+
+  .chapter__title-detail {
+    display: block;
+    white-space: nowrap;
+    font-size: 0.82em;
+  }
+
+  .chapter__blessing-word {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+    font-style: italic;
+    line-height: 1.2;
+  }
+
+  .chapter__body .chapter__wording {
+    margin-top: 0.75rem;
+    text-wrap: balance;
+  }
+
+  .chapter__body .chapter__time {
+    margin-top: 1.25rem;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .chapter__time-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+
+  /* The programme is one stem, flowering three times in order. */
+  .programme {
+    margin-top: 1.5rem;
+  }
+
+  .programme__intro {
+    font-size: 0.9375rem;
+    color: var(--color-ink-soft);
+  }
+
+  .programme__stem {
+    position: relative;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .programme__stem::before {
+    content: '';
+    position: absolute;
+    top: 1rem;
+    bottom: -2.5rem;
+    left: 6rem;
+    width: 2px;
+    margin-left: 0.875rem;
+    background: var(--color-sage);
+  }
+
+  .programme__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 5.5rem 2rem 1fr;
+    column-gap: 0.5rem;
+    align-items: center;
+    padding-block: 0.4375rem;
+  }
+
+  .programme__time {
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .programme__blossom {
+    display: block;
+    width: 2rem;
+  }
+
+  .programme__label {
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+
+  .programme__closing {
+    position: relative;
+    padding-left: 8.5rem;
+    margin-top: 0.75rem !important;
+    font-size: 1.25rem;
+    font-style: italic;
+  }
+
+  .chapter__venue {
+    margin-top: 1.75rem;
+  }
+
+  .chapter__venue-name {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .chapter__address {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.25rem;
+    font-style: normal;
+    color: var(--color-ink-soft);
+  }
+
+  /* Directions sit under a small arch, echoing the album's doorway. */
+  .chapter__directions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    margin-top: 1rem;
+    padding: 0.5rem 1.75rem;
+    border: 1px solid var(--accent);
+    border-radius: 1.5rem 1.5rem 0.25rem 0.25rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    transition:
+      background-color 250ms ease,
+      color 250ms ease;
+  }
+
+  .chapter__directions:hover {
+    background: var(--accent);
+    color: var(--color-ivory);
+  }
+
+  .chapter__body .chapter__host {
+    margin-top: 1.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  /* The Reception is the largest chapter: one dark page in the album. */
+  .chapter--rose {
+    background: var(--color-burgundy);
+    color: var(--color-ivory);
+    --cusp-colour: var(--color-burgundy);
+    --accent: var(--color-ivory);
+    text-align: center;
+    padding-top: clamp(3rem, 8vw, 6rem);
+    overflow: clip;
+  }
+
+  .chapter--rose .chapter__head {
+    position: static;
+    overflow: visible;
+    justify-content: center;
+    min-height: 0;
+    padding-block: 0;
+    border: 0;
+  }
+
+  .chapter--rose .chapter__date time,
+  .chapter--rose .chapter__date-text {
+    align-items: center;
+    text-align: center;
+  }
+
+  .chapter--rose .chapter__day {
+    font-size: clamp(8rem, 36vw, 19rem);
+  }
+
+  .chapter--rose .chapter__date-text {
+    margin-top: 1rem;
+    color: var(--color-ivory);
+    font-size: 1.25rem;
+  }
+
+  .chapter--rose .chapter__body {
+    margin-inline: auto;
+    padding-bottom: 2rem;
+  }
+
+  .chapter--rose .chapter__city,
+  .chapter--rose .chapter__address,
+  .chapter--rose .chapter__time-label {
+    color: color-mix(in srgb, var(--color-ivory) 90%, transparent);
+  }
+
+  .chapter--rose .chapter__directions:hover {
+    color: var(--color-burgundy);
+  }
+
+  .chapter--rose :focus-visible {
+    outline-color: var(--color-ivory);
+  }
+
+  @media (min-width: 48rem) {
+    .chapter:not(.chapter--rose) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      border-bottom: 2px solid var(--rule);
+    }
+
+    .chapter:not(.chapter--rose) .chapter__head {
+      min-height: 40rem;
+      padding: clamp(3rem, 6vw, 5.5rem) clamp(1.5rem, 4vw, 4rem);
+      border-bottom: 0;
+    }
+
+    .chapter:not(.chapter--rose) .chapter__lily {
+      width: min(50vw, 44rem);
+    }
+
+    .chapter__date-text {
+      font-size: 1.5rem;
+    }
+
+    .chapter--end .chapter__head {
+      order: 2;
+      justify-content: flex-start;
+    }
+
+    .chapter:not(.chapter--rose) .chapter__body {
+      align-self: center;
+      padding: clamp(3rem, 6vw, 5.5rem) clamp(1.5rem, 4vw, 4rem);
+    }
+
+    .chapter--start .chapter__body {
+      justify-self: start;
+    }
+
+    .chapter--end .chapter__body {
+      justify-self: end;
+    }
+  }
+</style>

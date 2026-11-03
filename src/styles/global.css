@@ -1,0 +1,142 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ivory: #f4ebdd;
+  --color-parchment: #efe4d3;
+  --color-beige: #e8d8c5;
+
+  --color-rose: #d9b9a7;
+  --color-sage: #a9b69a;
+  --color-teal: #7796a2;
+  --color-terracotta: #c98d67;
+  --color-lavender: #b8a0c5;
+  --color-saffron: #d5b76a;
+  --color-burgundy: #754c4c;
+
+  /* Deepened from the brief's #806B5C, which falls short of 4.5:1 on ivory at small sizes. */
+  --color-ink: #594437;
+  --color-ink-soft: #6f5b4d;
+  /* Text-safe versions of saffron and teal, for type on light grounds. */
+  --color-saffron-ink: #8a6414;
+  --color-teal-ink: #3f6470;
+
+  --font-display: 'Cormorant Garamond', 'Cormorant Fallback', Georgia, serif;
+  --font-body: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-arabic: 'Amiri', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+}
+
+/*
+ * Amiri, cut down from 108 KB to the glyphs of the Bismillah, the only Arabic on the site.
+ * New Arabic wording needs a new cut from @fontsource/amiri, or it falls back to a system font.
+ */
+@font-face {
+  font-family: 'Amiri';
+  src: url('../fonts/amiri-bismillah.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+/* Keeps text from jumping when Cormorant replaces Georgia. */
+@font-face {
+  font-family: 'Cormorant Fallback';
+  src: local('Georgia');
+  size-adjust: 88%;
+  ascent-override: 104%;
+  descent-override: 32%;
+  line-gap-override: 0%;
+}
+
+@layer base {
+  :root {
+    /* The hero and invitation share one arch, so their content is measured against it. */
+    --arch-width: min(100vw - 1rem, max(36rem, min(62rem, 122vh)));
+    --nav-height: 3rem;
+  }
+
+  html {
+    scroll-padding-top: calc(var(--nav-height) + 0.75rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-parchment);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    /* Cormorant's default old-style figures make "11" read as the Roman numeral II. */
+    font-variant-numeric: lining-nums;
+    -webkit-font-smoothing: antialiased;
+    overflow-wrap: break-word;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-burgundy);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .serif {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+
+  /* Repeating jali lattice. Sits behind a section's content. */
+  .jali {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .jali::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--jali-tile);
+    background-size: 4.5rem;
+    opacity: 0.22;
+    pointer-events: none;
+  }
+
+  /* A row of small cusped arches, echoing the arch's crown, where one section rises into the one above. */
+  .cusped-top {
+    position: relative;
+  }
+
+  .cusped-top::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 1.25rem;
+    margin-bottom: -1px;
+    background: var(--cusp-colour, currentColor);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 20'%3E%3Cpath d='M0 20A10 10 0 0 1 13 10 9 9 0 0 1 26 5Q30 5 32 0 34 5 38 5A9 9 0 0 1 51 10 10 10 0 0 1 64 20Z'/%3E%3C/svg%3E")
+      50% 100% / 4rem 1.25rem repeat-x;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 20'%3E%3Cpath d='M0 20A10 10 0 0 1 13 10 9 9 0 0 1 26 5Q30 5 32 0 34 5 38 5A9 9 0 0 1 51 10 10 10 0 0 1 64 20Z'/%3E%3C/svg%3E")
+      50% 100% / 4rem 1.25rem repeat-x;
+  }
+
+  /* The three painted rulings of a Mughal album page, as a horizontal band. */
+  .jadval {
+    border-top: 1px solid var(--color-teal);
+    box-shadow:
+      inset 0 3px 0 var(--color-ivory),
+      inset 0 5px 0 var(--color-saffron),
+      inset 0 8px 0 var(--color-ivory),
+      inset 0 9px 0 var(--color-burgundy);
+  }
+}

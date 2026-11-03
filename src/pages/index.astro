@@ -1,0 +1,32 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Navigation from '../components/layout/Navigation.astro';
+import Footer from '../components/layout/Footer.astro';
+import ArchDecoration from '../components/decorative/ArchDecoration.astro';
+import Hero from '../components/sections/Hero.astro';
+import Invitation from '../components/sections/Invitation.astro';
+import Celebrations from '../components/sections/Celebrations.astro';
+import Blessing from '../components/sections/Blessing.astro';
+---
+
+<MainLayout>
+  <Navigation />
+  <main>
+    <div class="folio jali">
+      <ArchDecoration />
+      <Hero />
+      <Invitation />
+    </div>
+    <Celebrations />
+    <Blessing />
+  </main>
+  <Footer />
+</MainLayout>
+
+<style>
+  /* One album page: the arch runs behind both sections and is clipped where the page ends. */
+  .folio {
+    overflow: clip;
+    background: var(--color-beige);
+  }
+</style>

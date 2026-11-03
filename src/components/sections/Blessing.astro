@@ -1,0 +1,55 @@
+---
+import { blessing } from '../../data/wedding';
+import Art from '../decorative/Art.astro';
+---
+
+<section id="blessing" class="blessing jali cusped-top" aria-labelledby="blessing-title">
+  <h2 id="blessing-title" class="sr-only">Blessing</h2>
+  <div class="blessing__inner" data-reveal>
+    <Art name="branch-top" class="blessing__branch" />
+    <p class="blessing__text serif">
+      {blessing.text}
+      <span class="blessing__close">{blessing.close}</span>
+    </p>
+    <Art name="branch-bottom" class="blessing__branch" />
+  </div>
+</section>
+
+<style>
+  .blessing {
+    --cusp-colour: var(--color-ivory);
+    z-index: 3;
+    background: var(--color-ivory);
+    padding: clamp(5.5rem, 15vw, 11rem) 1.5rem;
+  }
+
+  .blessing__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .blessing__branch {
+    width: min(26rem, 88%);
+  }
+
+  .blessing__text {
+    margin: 0;
+    font-size: clamp(1.875rem, 5vw, 3.25rem);
+    font-style: italic;
+    line-height: 1.22;
+    text-wrap: balance;
+  }
+
+  .blessing__close {
+    display: block;
+    margin-top: 1rem;
+    font-style: normal;
+    font-weight: 600;
+    color: var(--color-burgundy);
+  }
+</style>

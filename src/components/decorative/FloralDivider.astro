@@ -1,0 +1,19 @@
+---
+import Art from './Art.astro';
+---
+
+<div class="divider" aria-hidden="true">
+  <Art name="divider" class="divider__art" />
+</div>
+
+<style>
+  .divider {
+    display: flex;
+    justify-content: center;
+    margin-block: var(--divider-space, 2.25rem);
+  }
+
+  .divider__art {
+    width: min(14rem, 70%);
+  }
+</style>

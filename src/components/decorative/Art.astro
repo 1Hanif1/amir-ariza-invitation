@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import type { ArtName } from '../../data/assets';
+import { resolveArt } from '../../lib/art';
+
+interface Props extends Omit<HTMLAttributes<'img'>, 'src' | 'alt' | 'name'> {
+  name: ArtName;
+  /** Set for artwork visible on first load. Everything else loads lazily. */
+  eager?: boolean;
+}
+
+// `rest` carries the parent's style scope, so parents can size this image from their own CSS.
+const { name, class: className, eager = false, ...rest } = Astro.props;
+const art = resolveArt(name);
+---
+
+<img
+  src={art.src}
+  alt={art.alt}
+  width={art.width}
+  height={art.height}
+  class={className}
+  loading={eager ? 'eager' : 'lazy'}
+  decoding="async"
+  draggable="false"
+  {...rest}
+/>
