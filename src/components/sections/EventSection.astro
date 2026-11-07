@@ -171,12 +171,10 @@ const { event, lily, side } = Astro.props;
     right: 0;
   }
 
-  /* As the chapter scrolls in, its lily rises out of the ground line and leans upright. */
+  /* As the chapter scrolls in, its lily rises out of the ground line. (No tilt: the artwork is cut flat along its base.) */
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
       .chapter__lily {
-        --lean: -5deg;
-        transform-origin: 30% 100%;
         animation: lily-rise linear both;
       }
 
@@ -185,22 +183,15 @@ const { event, lily, side } = Astro.props;
         animation-timeline: view();
         animation-range: entry 0% cover 45%;
       }
-
-      .chapter--end .chapter__lily {
-        --lean: 5deg;
-        transform-origin: 70% 100%;
-      }
     }
   }
 
   @keyframes lily-rise {
     from {
       translate: 0 32%;
-      rotate: var(--lean);
     }
     to {
       translate: 0 0;
-      rotate: 0deg;
     }
   }
 
@@ -373,7 +364,6 @@ const { event, lily, side } = Astro.props;
 
   :global(.inscribe) .programme.is-inscribed .programme__blossom {
     scale: 1;
-    rotate: 0deg;
   }
 
   .programme__label {
