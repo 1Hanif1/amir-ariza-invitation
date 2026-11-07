@@ -5,9 +5,10 @@
  *   0      the seal lifts away and the flap swings open      (.is-open)
  *   600    petals and gold leaf burst out of the open mouth
  *   1000   the card rises while the envelope slides down     (.is-drawing)
- *   2600   the card fills the screen; the page is released and
- *          the card fades away over it                       (.is-revealing)
- *   3300   the envelope is removed
+ *   2600   the card fills the screen and a warm light blooms
+ *          out from its centre                               (.is-blooming)
+ *   3600   the page is released and the light fades over it  (.is-revealing)
+ *   4300   the envelope is removed
  *
  * A return visit runs the same sequence faster, by itself. Reduced motion is a plain fade.
  */
@@ -18,8 +19,10 @@ const PETALS_AT = 600;
 const PETAL_RELEASE = 650;
 const DRAW_AT = 1000;
 const DRAW_DURATION = 1600;
-/** The fade from the navy card to the page fills the rest of the tapped opening. */
-const REVEAL_AT = DRAW_AT + DRAW_DURATION;
+const BLOOM_AT = DRAW_AT + DRAW_DURATION;
+const BLOOM_DURATION = 1100;
+/** The light is nearly full when the page starts showing through; the fade fills the rest of the tapped opening. */
+const REVEAL_AT = BLOOM_AT + 1000;
 
 const startCallbacks: ((plan: OpeningPlan) => void)[] = [];
 
@@ -106,6 +109,7 @@ if (opening && trigger && root.classList.contains('opening-pending')) {
 
     opening.style.setProperty('--k', String(k));
     opening.style.setProperty('--draw-duration', `${DRAW_DURATION * k}ms`);
+    opening.style.setProperty('--bloom-duration', `${BLOOM_DURATION * k}ms`);
     opening.style.setProperty('--reveal-duration', `${(DURATION_MS.tap - REVEAL_AT) * k}ms`);
 
     const portrait = window.innerHeight >= window.innerWidth;
@@ -118,6 +122,7 @@ if (opening && trigger && root.classList.contains('opening-pending')) {
       });
     });
     at(DRAW_AT, () => opening.classList.add('is-drawing'));
+    at(BLOOM_AT, () => opening.classList.add('is-blooming'));
     at(REVEAL_AT, () => {
       opening.classList.add('is-revealing');
       release();

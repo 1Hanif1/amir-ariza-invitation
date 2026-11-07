@@ -8,7 +8,7 @@ export const OPENED_KEY = 'aa-envelope-opened';
 export type OpeningPlan = { mode: 'tap' | 'auto'; motion: 'full' | 'reduced' };
 
 /** Target durations in milliseconds. `autoDelay` is the pause before a return visit opens by itself. */
-export const DURATION_MS = { tap: 3300, auto: 2000, reduced: 700, autoDelay: 400 } as const;
+export const DURATION_MS = { tap: 4300, auto: 2600, reduced: 700, autoDelay: 400 } as const;
 
 /** Storage may be missing or may throw (private browsing, blocked site data): both mean a first visit. */
 export function hasOpenedBefore(storage: { getItem(key: string): string | null } | null): boolean {

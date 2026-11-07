@@ -85,6 +85,11 @@
     outline-offset: 3px;
     border-radius: 2px;
   }
+
+  /* Headings the script focuses after the envelope opens: focus is for screen readers, not a visible box. */
+  [tabindex='-1']:focus {
+    outline: none;
+  }
 }
 
 @layer components {

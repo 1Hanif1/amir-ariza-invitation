@@ -427,11 +427,38 @@ const textureStyle =
     transition: opacity 500ms ease calc(var(--draw-duration) - 300ms);
   }
 
-  /* The card has filled the screen: it fades away over the page, whose hero is already rising in. */
+  /*
+   * Once the card fills the screen, a soft warm light blooms out from its centre in the page's own
+   * ivory, so the navy gives way gently rather than cutting to the light page beneath.
+   */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 50%,
+      #f4ebdd calc(var(--bloom) - 45%),
+      rgb(227 201 138 / 0.55) calc(var(--bloom) - 18%),
+      rgb(227 201 138 / 0) var(--bloom)
+    );
+  }
+
+  .envelope.is-blooming .card::before {
+    --bloom: 150%;
+    transition: --bloom var(--bloom-duration, 1100ms) cubic-bezier(0.45, 0, 0.25, 1);
+  }
+
+  /* The light has filled the screen: it fades away over the page, whose hero is already rising in. */
   .envelope.is-revealing {
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--reveal-duration, 700ms) ease;
+  }
+
+  @property --bloom {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
   }
 
   @keyframes glint {
