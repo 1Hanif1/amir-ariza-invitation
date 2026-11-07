@@ -178,6 +178,10 @@ const { event, lily, side } = Astro.props;
         --lean: -5deg;
         transform-origin: 30% 100%;
         animation: lily-rise linear both;
+      }
+
+      /* The timeline sits in its own rule, with a doubled class: in the same rule the minifier folds it into the animation shorthand, which browsers reject. */
+      .chapter__lily.chapter__lily {
         animation-timeline: view();
         animation-range: entry 0% cover 45%;
       }

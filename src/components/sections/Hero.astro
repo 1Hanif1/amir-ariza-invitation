@@ -183,6 +183,10 @@ import Art from '../decorative/Art.astro';
     @supports (animation-timeline: view()) {
       .hero__ground {
         animation: lilies-settle linear both;
+      }
+
+      /* The timeline sits in its own rule, with a doubled class: in the same rule the minifier folds it into the animation shorthand, which browsers reject. */
+      .hero__ground.hero__ground {
         animation-timeline: view();
         animation-range: exit 0% exit 100%;
       }

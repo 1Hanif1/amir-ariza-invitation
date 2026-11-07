@@ -249,6 +249,10 @@ import FloralDivider from '../decorative/FloralDivider.astro';
       @supports (animation-timeline: view()) {
         .invite__vine {
           animation: vine-drift linear both;
+        }
+
+        /* The timeline sits in its own rule, with a doubled class: in the same rule the minifier folds it into the animation shorthand, which browsers reject. */
+        .invite__vine.invite__vine {
           animation-timeline: view();
         }
       }

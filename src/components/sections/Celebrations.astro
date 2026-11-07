@@ -5,6 +5,7 @@ import Art from '../decorative/Art.astro';
 import EventSection from './EventSection.astro';
 
 // The Reception has no lily of its own: its pair stands in the garden below it.
+const reception = events[events.length - 1];
 const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
   { lily: 'lily-haldi', side: 'start' },
   { lily: 'lily-nikah', side: 'end' },
@@ -19,11 +20,22 @@ const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
     <Art name="marigold-spray" class="celebrations__spray" />
   </header>
 
-  {events.map((event, index) => <EventSection event={event} {...chapters[index]} />)}
+  {events.slice(0, -1).map((event, index) => <EventSection event={event} {...chapters[index]} />)}
 
-  <div class="reception-garden" aria-hidden="true">
-    <Art name="lily-reception-left" class="reception-garden__lily" />
-    <Art name="lily-reception-right" class="reception-garden__lily" />
+  <!--
+    The Reception and its garden share one dark page. On wide screens the garden's two lilies keep
+    the guest company down the page: held small in the bottom corners of the screen, in the side
+    margins, as the Reception scrolls past, then growing to full size as they land in the garden.
+  -->
+  <div class="reception">
+    <EventSection event={reception} {...chapters[events.length - 1]} />
+    <div class="reception-garden" aria-hidden="true"></div>
+    <div class="reception-lilies" aria-hidden="true">
+      <div class="reception-lilies__row">
+        <Art name="lily-reception-left" class="reception-garden__lily" />
+        <Art name="lily-reception-right" class="reception-garden__lily" />
+      </div>
+    </div>
   </div>
 </section>
 
@@ -65,12 +77,42 @@ const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
     pointer-events: none;
   }
 
+  /* One burgundy page for the Reception and its garden; the chapter's own background steps aside. */
+  .reception {
+    position: relative;
+    container-type: inline-size;
+    timeline-scope: --garden;
+    background: var(--color-burgundy);
+  }
+
+  .reception :global(.chapter--rose) {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+  }
+
+  /* The ground the lilies rest on: as tall as they are (the artwork is 735 × 490). */
   .reception-garden {
+    height: calc(min(50cqi, 38rem) * 490 / 735);
+    view-timeline: --garden block;
+  }
+
+  /* The lilies' layer covers the whole Reception, behind its words; they rest at its foot. */
+  .reception-lilies {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .reception-lilies__row {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    background: var(--color-burgundy);
-    overflow: clip;
   }
 
   .reception-garden__lily {
@@ -84,12 +126,19 @@ const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
       /* The spray drifts against the scroll and turns a little as the guest passes it. */
       .celebrations__spray {
         animation: spray-drift linear both;
+      }
+
+      /* The timeline sits in its own rule, with a doubled class: in the same rule the minifier folds it into the animation shorthand, which browsers reject. */
+      .celebrations__spray.celebrations__spray {
         animation-timeline: view();
       }
 
       /* The Reception's pair grows up from the bottom of the dark page as it comes into view. */
       .reception-garden__lily {
         animation: garden-rise linear both;
+      }
+
+      .reception-garden__lily.reception-garden__lily {
         animation-timeline: view();
         animation-range: entry 0% cover 50%;
       }
@@ -102,6 +151,9 @@ const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
       .reception-garden__lily:last-child {
         transform-origin: 80% 100%;
         --lean: 4deg;
+      }
+
+      .reception-garden__lily.reception-garden__lily:last-child {
         animation-range: entry 10% cover 55%;
       }
     }
@@ -125,6 +177,51 @@ const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
     }
     to {
       translate: 0 0;
+      rotate: 0deg;
+    }
+  }
+
+  /*
+   * Wide screens: the row of lilies is held at the foot of the screen (sticky) for as long as the
+   * Reception is on screen, the lilies small and leaning out in the side margins. Over the last
+   * stretch, as their resting place scrolls into view, they straighten and grow into it.
+   */
+  @media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+    @supports (timeline-scope: --garden) and (animation-timeline: view()) {
+      .reception-lilies__row {
+        position: sticky;
+        bottom: 0;
+      }
+
+      .reception-garden__lily,
+      .reception-garden__lily:last-child {
+        animation: lily-land linear both;
+      }
+
+      .reception .reception-garden__lily.reception-garden__lily {
+        animation-timeline: --garden;
+        animation-range: entry 0% entry 100%;
+      }
+
+      .reception-garden__lily:first-child {
+        transform-origin: 0 100%;
+        --lean: -7deg;
+      }
+
+      .reception-garden__lily:last-child {
+        transform-origin: 100% 100%;
+        --lean: 7deg;
+      }
+    }
+  }
+
+  @keyframes lily-land {
+    from {
+      scale: 0.5;
+      rotate: var(--lean);
+    }
+    to {
+      scale: 1;
       rotate: 0deg;
     }
   }
