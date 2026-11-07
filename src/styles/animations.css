@@ -108,3 +108,47 @@ html.opening-running .nav {
 html.lenis {
   scroll-behavior: auto;
 }
+
+/*
+ * Illumination (src/scripts/inscribe.ts). Only under html.inscribe, which the script adds when
+ * motion is welcome, so without it every word and ornament simply stands in place.
+ */
+
+/* Names and headings write themselves in, word by word. */
+.inscribe [data-write] .word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(7px);
+  translate: 0 0.28em;
+  transition:
+    opacity 900ms ease,
+    filter 1100ms ease,
+    translate 1100ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--write-delay, 0ms) + var(--i) * 90ms);
+}
+
+.inscribe [data-write].is-inscribed .word {
+  opacity: 1;
+  filter: blur(0);
+  translate: 0 0;
+}
+
+/* Ornaments unroll from their centre outward. */
+.inscribe [data-draw='unroll'] {
+  clip-path: inset(-10% 50% -10% 50%);
+  transition: clip-path 1700ms cubic-bezier(0.6, 0, 0.2, 1) var(--draw-delay, 150ms);
+}
+
+.inscribe [data-draw='unroll'].is-inscribed {
+  clip-path: inset(-10% -1% -10% -1%);
+}
+
+/* Art that grows up out of the line beneath it. */
+.inscribe [data-draw='grow'] {
+  clip-path: inset(100% -5% 0 -5%);
+  transition: clip-path 2000ms cubic-bezier(0.5, 0, 0.2, 1) var(--draw-delay, 150ms);
+}
+
+.inscribe [data-draw='grow'].is-inscribed {
+  clip-path: inset(-5% -5% 0 -5%);
+}

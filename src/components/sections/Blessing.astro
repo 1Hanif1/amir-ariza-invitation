@@ -6,12 +6,12 @@ import Art from '../decorative/Art.astro';
 <section id="blessing" class="blessing jali cusped-top" aria-labelledby="blessing-title">
   <h2 id="blessing-title" class="sr-only">Blessing</h2>
   <div class="blessing__inner" data-reveal>
-    <Art name="branch-top" class="blessing__branch" />
-    <p class="blessing__text serif">
+    <Art name="branch-top" class="blessing__branch" data-draw="unroll" />
+    <p class="blessing__text serif" data-write style="--write-delay: 300ms">
       {blessing.text}
       <span class="blessing__close">{blessing.close}</span>
     </p>
-    <Art name="branch-bottom" class="blessing__branch" />
+    <Art name="branch-bottom" class="blessing__branch" data-draw="unroll" style="--draw-delay: 600ms" />
   </div>
 </section>
 

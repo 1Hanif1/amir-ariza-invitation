@@ -5,10 +5,10 @@ import FloralDivider from '../decorative/FloralDivider.astro';
 ---
 
 <footer class="footer">
-  <div class="footer__inner">
-    <Art name="lily-crown" class="footer__crown" />
+  <div class="footer__inner" data-draw="rule">
+    <Art name="lily-crown" class="footer__crown" data-draw="grow" />
     <Art name="aa-monogram" class="footer__monogram" />
-    <p class="footer__names serif">{couple.groom.full} <span>&amp;</span> {couple.bride.full}</p>
+    <p class="footer__names serif" data-write>{couple.groom.full} <span>&amp;</span> {couple.bride.full}</p>
     <p class="footer__date">
       <time datetime={couple.date.iso}>{couple.date.display}</time>
     </p>
@@ -28,7 +28,26 @@ import FloralDivider from '../decorative/FloralDivider.astro';
   .footer__inner {
     position: relative;
     padding: 2.5rem 1.5rem 3rem;
-    border-top: 2px solid var(--color-burgundy);
+  }
+
+  /* The footer's top line, which draws itself out from the centre (see the inscribe styles below). */
+  .footer__inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-burgundy);
+  }
+
+  :global(.inscribe) .footer__inner::before {
+    scale: 0 1;
+    transition: scale 1600ms cubic-bezier(0.6, 0, 0.2, 1);
+  }
+
+  :global(.inscribe) .footer__inner.is-inscribed::before {
+    scale: 1 1;
   }
 
   /* Cut off by the footer's top line, so the lily grows out of it into the blessing above. */

@@ -60,6 +60,10 @@ const jaliTile = `--jali-tile: url('${resolveArt('jali').src}')`;
   <body>
     <slot />
 
+    <script>
+      import '../scripts/inscribe';
+    </script>
+
     <script is:inline>
       (function () {
         var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

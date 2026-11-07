@@ -21,13 +21,13 @@ import FloralDivider from '../decorative/FloralDivider.astro';
 
     <div class="invite__host" data-reveal>
       <p class="invite__small">{invitation.host.honorific}</p>
-      <p class="invite__host-name serif">{invitation.host.name}</p>
+      <p class="invite__host-name serif" data-write>{invitation.host.name}</p>
       <p class="invite__small">{invitation.host.place}</p>
     </div>
 
     <div class="invite__request" data-reveal>
       <p class="invite__small">{invitation.request}</p>
-      <p class="invite__occasion serif">
+      <p class="invite__occasion serif" data-write>
         {invitation.occasion.name} <span class="invite__occasion-detail">{invitation.occasion.detail}</span>
       </p>
       <p class="invite__small">{invitation.relation}</p>
@@ -35,19 +35,19 @@ import FloralDivider from '../decorative/FloralDivider.astro';
 
     <div class="invite__couple" data-reveal>
       <div class="invite__person invite__person--groom">
-        <p class="invite__person-name serif">{invitation.groom.name}</p>
+        <p class="invite__person-name serif" data-write>{invitation.groom.name}</p>
         <p class="invite__small">{invitation.groom.parents}</p>
       </div>
       <p class="invite__joiner serif">{invitation.joiner}</p>
       <div class="invite__person invite__person--bride">
-        <p class="invite__person-name serif">{invitation.bride.name}</p>
+        <p class="invite__person-name serif" data-write style="--write-delay: 250ms">{invitation.bride.name}</p>
         <p class="invite__small">{invitation.bride.parents}</p>
       </div>
     </div>
 
     <div class="invite__when" data-reveal>
       <p class="invite__insha serif">{invitation.blessingWord}</p>
-      <p class="invite__date serif">{invitation.date}</p>
+      <p class="invite__date serif" data-write>{invitation.date}</p>
       <p class="invite__small">({invitation.hijri})</p>
       <p class="invite__dinner">{invitation.dinner}</p>
     </div>
@@ -244,12 +244,31 @@ import FloralDivider from '../decorative/FloralDivider.astro';
       display: block;
     }
 
+    /* The vines climb a little slower than the page, so the margins have depth. */
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: view()) {
+        .invite__vine {
+          animation: vine-drift linear both;
+          animation-timeline: view();
+        }
+      }
+    }
+
     .invite__vine--left {
       left: calc((100vw - var(--arch-width)) / 2 - 11.5rem);
     }
 
     .invite__vine--right {
       right: calc((100vw - var(--arch-width)) / 2 - 11.5rem);
+    }
+  }
+
+  @keyframes vine-drift {
+    from {
+      translate: 0 -5rem;
+    }
+    to {
+      translate: 0 5rem;
     }
   }
 </style>

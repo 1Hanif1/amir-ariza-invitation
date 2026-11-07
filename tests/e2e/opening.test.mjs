@@ -62,12 +62,12 @@ test('first visit waits for a tap', async () => {
 test('hero holds its entrance until the letter arrives', async () => {
   const page = await openPage(browser, preview.url);
   await sleep(2000);
-  const waiting = await page.evaluate(() => getComputedStyle(document.querySelector('.hero__name')).opacity);
+  const waiting = await page.evaluate(() => getComputedStyle(document.querySelector('.hero__name .word')).opacity);
   assert.equal(waiting, '0');
   await page.click('[data-opening-trigger]');
   await waitForOpened(page, DURATION_MS.tap + SLACK);
   await sleep(2500);
-  const settled = await page.evaluate(() => getComputedStyle(document.querySelector('.hero__name')).opacity);
+  const settled = await page.evaluate(() => getComputedStyle(document.querySelector('.hero__name .word')).opacity);
   assert.equal(settled, '1');
   await page.closeContext();
 });

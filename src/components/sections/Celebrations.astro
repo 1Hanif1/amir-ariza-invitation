@@ -14,7 +14,7 @@ const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
 
 <section id="celebrations" class="celebrations cusped-top" aria-labelledby="celebrations-title">
   <header class="celebrations__intro" data-reveal>
-    <h2 id="celebrations-title" class="celebrations__title serif">The<br />Celebrations</h2>
+    <h2 id="celebrations-title" class="celebrations__title serif" data-write>The<br />Celebrations</h2>
     <p class="celebrations__lede">{celebrationsIntro}</p>
     <Art name="marigold-spray" class="celebrations__spray" />
   </header>
@@ -77,6 +77,56 @@ const chapters: { lily?: ArtName; side: 'start' | 'end' }[] = [
     display: block;
     width: 50%;
     max-width: 38rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      /* The spray drifts against the scroll and turns a little as the guest passes it. */
+      .celebrations__spray {
+        animation: spray-drift linear both;
+        animation-timeline: view();
+      }
+
+      /* The Reception's pair grows up from the bottom of the dark page as it comes into view. */
+      .reception-garden__lily {
+        animation: garden-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 50%;
+      }
+
+      .reception-garden__lily:first-child {
+        transform-origin: 20% 100%;
+        --lean: -4deg;
+      }
+
+      .reception-garden__lily:last-child {
+        transform-origin: 80% 100%;
+        --lean: 4deg;
+        animation-range: entry 10% cover 55%;
+      }
+    }
+  }
+
+  @keyframes spray-drift {
+    from {
+      translate: 0 2.5rem;
+      rotate: -6deg;
+    }
+    to {
+      translate: 0 -2.5rem;
+      rotate: 5deg;
+    }
+  }
+
+  @keyframes garden-rise {
+    from {
+      translate: 0 40%;
+      rotate: var(--lean);
+    }
+    to {
+      translate: 0 0;
+      rotate: 0deg;
+    }
   }
 
   @media (min-width: 48rem) {

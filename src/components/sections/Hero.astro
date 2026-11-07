@@ -13,12 +13,12 @@ import Art from '../decorative/Art.astro';
     <p class="hero__headline rise" style="--delay: 250ms">{couple.headline}</p>
 
     <h1 id="hero-names" class="hero__names serif">
-      <span class="hero__name hero__name--groom rise" style="--delay: 400ms">{couple.groom.full}</span>
-      <span class="hero__ampersand rise" style="--delay: 550ms">&amp;</span>
-      <span class="hero__name hero__name--bride rise" style="--delay: 700ms">{couple.bride.full}</span>
+      <span class="hero__name hero__name--groom" data-write style="--write-delay: 400ms">{couple.groom.full}</span>
+      <span class="hero__ampersand rise" style="--delay: 850ms">&amp;</span>
+      <span class="hero__name hero__name--bride" data-write style="--write-delay: 1000ms">{couple.bride.full}</span>
     </h1>
 
-    <p class="hero__date serif rise" style="--delay: 900ms">
+    <p class="hero__date serif rise" style="--delay: 1500ms">
       <time datetime={couple.date.iso}>
         <span class="hero__date-side">{couple.date.weekday}</span>
         <span class="hero__date-day">{couple.date.day}</span>
@@ -26,14 +26,16 @@ import Art from '../decorative/Art.astro';
       </time>
     </p>
 
-    <div class="hero__monogram rise" style="--delay: 1100ms">
+    <div class="hero__monogram rise" style="--delay: 1750ms">
       <Art name="aa-monogram" class="hero__monogram-art" eager />
     </div>
   </div>
 
   <div class="hero__garden">
-    <Art name="hero-lily-left" class="hero__lily hero__lily--left bloom" eager />
-    <Art name="hero-lily-right" class="hero__lily hero__lily--right bloom" eager />
+    <div class="hero__ground">
+      <Art name="hero-lily-left" class="hero__lily hero__lily--left bloom" eager />
+      <Art name="hero-lily-right" class="hero__lily hero__lily--right bloom" eager />
+    </div>
   </div>
 
   <nav class="hero__dates jadval" aria-label="Jump to an event">
@@ -166,6 +168,28 @@ import Art from '../decorative/Art.astro';
     min-height: 44vw;
     /* Trims the lilies along the ground line. They stay free to rise upward and bleed sideways. */
     clip-path: inset(-100vh -100vw 0 -100vw);
+  }
+
+  /* Holds the lilies, so they can sink back into the ground as the guest scrolls away. */
+  .hero__ground {
+    position: absolute;
+    inset: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .hero__ground {
+        animation: lilies-settle linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+    }
+  }
+
+  @keyframes lilies-settle {
+    to {
+      translate: 0 30%;
+    }
   }
 
   /* Set slightly past the edges, so the slow sway never reveals where the artwork is cropped. */

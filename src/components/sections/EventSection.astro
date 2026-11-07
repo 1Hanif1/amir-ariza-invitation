@@ -14,13 +14,13 @@ interface Props {
 const { event, lily, side } = Astro.props;
 ---
 
-<article id={event.id} class:list={['chapter', `chapter--${side}`, `chapter--${event.colourway}`]} aria-labelledby={`${event.id}-title`}>
+<article id={event.id} class:list={['chapter', `chapter--${side}`, `chapter--${event.colourway}`]} aria-labelledby={`${event.id}-title`} data-draw="rule">
   <div class="chapter__head">
     {lily && <Art name={lily} class="chapter__lily" />}
     <p class="chapter__date serif">
       {event.blessingWord && <span class="chapter__blessing-word">{event.blessingWord}</span>}
       <time datetime={event.isoDate}>
-        <span class="chapter__day">{event.day}</span>
+        <span class="chapter__day" data-write>{event.day}</span>
         <span class="chapter__date-text">
           <span class="chapter__weekday">{event.weekday}</span>
           <span>{event.monthYear}</span>
@@ -32,7 +32,7 @@ const { event, lily, side } = Astro.props;
 
   <div class="chapter__body" data-reveal>
     <p class="chapter__city">{event.city}</p>
-    <h3 id={`${event.id}-title`} class="chapter__title serif">
+    <h3 id={`${event.id}-title`} class="chapter__title serif" data-write style="--write-delay: 200ms">
       {event.name}
       {event.nameDetail && <span class="chapter__title-detail">{event.nameDetail}</span>}
     </h3>
@@ -40,11 +40,11 @@ const { event, lily, side } = Astro.props;
 
     {
       event.programme && (
-        <div class="programme">
+        <div class="programme" data-draw="stem">
           <p class="programme__intro">{event.programme.intro}</p>
           <ol class="programme__stem">
-            {event.programme.items.map((item) => (
-              <li class="programme__item">
+            {event.programme.items.map((item, index) => (
+              <li class="programme__item" style={`--n: ${index}`}>
                 <span class="programme__time serif">{item.time}</span>
                 <Art name="blossom" class="programme__blossom" />
                 <span class="programme__label serif">{item.label}</span>
@@ -104,7 +104,43 @@ const { event, lily, side } = Astro.props;
     align-items: flex-start;
     min-height: clamp(11.5rem, 50vw, 19rem);
     padding: 1.5rem 1.25rem 1rem;
-    border-bottom: 2px solid var(--rule);
+  }
+
+  /*
+   * The chapter's rule: under the head on phones, under the whole chapter on wider screens.
+   * It draws itself out from the lily's side when the chapter arrives.
+   */
+  .chapter__head::after,
+  .chapter::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--rule);
+    transform-origin: 0 50%;
+  }
+
+  .chapter--end .chapter__head::after,
+  .chapter--end::after {
+    transform-origin: 100% 50%;
+  }
+
+  .chapter::after,
+  .chapter--rose .chapter__head::after {
+    display: none;
+  }
+
+  :global(.inscribe) .chapter .chapter__head::after,
+  :global(.inscribe) .chapter::after {
+    scale: 0 1;
+    transition: scale 1800ms cubic-bezier(0.6, 0, 0.2, 1) 200ms;
+  }
+
+  :global(.inscribe) .chapter.is-inscribed .chapter__head::after,
+  :global(.inscribe) .chapter.is-inscribed::after {
+    scale: 1 1;
   }
 
   .chapter--start .chapter__head {
@@ -124,6 +160,35 @@ const { event, lily, side } = Astro.props;
 
   .chapter--end .chapter__lily {
     right: 0;
+  }
+
+  /* As the chapter scrolls in, its lily rises out of the ground line and leans upright. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .chapter__lily {
+        --lean: -5deg;
+        transform-origin: 30% 100%;
+        animation: lily-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 45%;
+      }
+
+      .chapter--end .chapter__lily {
+        --lean: 5deg;
+        transform-origin: 70% 100%;
+      }
+    }
+  }
+
+  @keyframes lily-rise {
+    from {
+      translate: 0 32%;
+      rotate: var(--lean);
+    }
+    to {
+      translate: 0 0;
+      rotate: 0deg;
+    }
   }
 
   .chapter__date {
@@ -273,6 +338,30 @@ const { event, lily, side } = Astro.props;
     width: 2rem;
   }
 
+  :global(.inscribe) .programme__stem::before {
+    transform-origin: 50% 0;
+    scale: 1 0;
+    transition: scale 1800ms cubic-bezier(0.45, 0, 0.2, 1) 300ms;
+  }
+
+  :global(.inscribe) .programme.is-inscribed .programme__stem::before {
+    scale: 1 1;
+  }
+
+  :global(.inscribe) .programme__blossom {
+    scale: 0;
+    rotate: -60deg;
+    transition:
+      scale 700ms cubic-bezier(0.3, 1.5, 0.5, 1),
+      rotate 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: calc(500ms + var(--n) * 450ms);
+  }
+
+  :global(.inscribe) .programme.is-inscribed .programme__blossom {
+    scale: 1;
+    rotate: 0deg;
+  }
+
   .programme__label {
     font-size: 1.5rem;
     line-height: 1.15;
@@ -392,13 +481,19 @@ const { event, lily, side } = Astro.props;
     .chapter:not(.chapter--rose) {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      border-bottom: 2px solid var(--rule);
+    }
+
+    .chapter:not(.chapter--rose)::after {
+      display: block;
+    }
+
+    .chapter .chapter__head::after {
+      display: none;
     }
 
     .chapter:not(.chapter--rose) .chapter__head {
       min-height: 40rem;
       padding: clamp(3rem, 6vw, 5.5rem) clamp(1.5rem, 4vw, 4rem);
-      border-bottom: 0;
     }
 
     .chapter:not(.chapter--rose) .chapter__lily {
