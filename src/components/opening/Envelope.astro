@@ -2,8 +2,8 @@
 /**
  * The opening: a full-screen ivory envelope with a navy wax seal bearing the AA monogram.
  * A tap anywhere opens it: the seal lifts away, the flap swings open, rose petals and gold leaf
- * burst out of the envelope's mouth, then a full-width navy card rises out of the envelope while the
- * envelope slides down off the screen. Once the card fills the screen it fades away over the page.
+ * burst out of the envelope's mouth, then a full-width beige card rises out of the envelope while the
+ * envelope slides down off the screen. Once the card fills the screen it fades into the page.
  * The timing lives in src/scripts/opening.ts.
  *
  * Shown only when the head script in MainLayout has marked <html class="opening-pending"> before
@@ -119,7 +119,12 @@ const textureStyle =
     --color-champagne: #e3c98a;
     --color-gold: #b68f2e;
     --color-gold-ink: #7e5b1f;
-    --color-night: #0b1030;
+    /* The seal's wax: the main site's burgundy, lit from the top left. */
+    --wax-light: #9a6863;
+    --wax-base: #754c4c;
+    --wax-deep: #4b2e2e;
+    /* The card is the page's own beige, so it melts into the page as it fades. */
+    --card: #e8d8c5;
     --font-display: 'Marcellus', Georgia, serif;
     /* Speeds the whole sequence up for return visits, which open by themselves. Set by the script. */
     --k: 1;
@@ -276,16 +281,20 @@ const textureStyle =
   .rim,
   .wax {
     position: absolute;
-    background: radial-gradient(circle at 38% 32%, #2a3170, var(--color-night) 70%);
+    background: radial-gradient(circle at 38% 32%, var(--wax-light), var(--wax-base) 55%, var(--wax-deep));
   }
 
-  /* With the wax texture: the same light-from-the-top-left shading, laid thinly over the real wax. */
+  /*
+   * With the wax texture: the photo gives the wax its surface (its light and shade only, recoloured
+   * burgundy by the luminosity blend), and the same top-left shading is laid thinly over it.
+   */
   .has-wax .rim,
   .has-wax .wax {
     background:
-      radial-gradient(circle at 38% 32%, rgb(42 49 112 / 0.35), rgb(11 16 48 / 0.3) 70%),
+      radial-gradient(circle at 38% 32%, rgb(154 104 99 / 0.45), rgb(75 46 46 / 0.35) 70%),
       var(--wax) center / cover,
-      var(--color-night);
+      var(--wax-base);
+    background-blend-mode: normal, luminosity, normal;
   }
 
   /* An uneven rim, like pressed wax. */
@@ -293,7 +302,7 @@ const textureStyle =
     inset: -4%;
     border-radius: 47% 53% 49% 51% / 52% 47% 53% 48%;
     filter: brightness(0.8);
-    box-shadow: 0 5px 14px rgb(11 16 48 / 0.35);
+    box-shadow: 0 5px 14px rgb(75 46 46 / 0.35);
   }
 
   .wax {
@@ -381,7 +390,7 @@ const textureStyle =
   }
 
   /*
-   * The card: a full-width navy sheet hidden in the envelope's pocket. It rises out of the open mouth
+   * The card: a full-width beige sheet hidden in the envelope's pocket. It rises out of the open mouth
    * while the envelope slides down off the screen, and ends exactly filling the screen.
    * Both move on the same curve, so on screen the card's top edge glides steadily up to the top.
    */
@@ -397,18 +406,18 @@ const textureStyle =
     inset: 0;
     /* The card is exactly the envelope's height, so these percentages match the envelope's own. */
     translate: 0 calc(var(--side-apex) + 1%);
-    background: var(--color-night);
-    /* A fine paper edge. (No outer shadow: Chrome let it leak past the pocket's clipping.) */
-    border-top: 1px solid rgb(227 201 138 / 0.45);
+    background: var(--card);
+    /* A fine saffron edge. (No outer shadow: Chrome let it leak past the pocket's clipping.) */
+    border-top: 1.5px solid #d5b76a;
   }
 
-  /* A thin gold rule inset from the card's edge, which fades once the card has filled the screen. */
+  /* A thin saffron rule inset from the card's edge, which fades once the card has filled the screen. */
   .card::after {
     content: '';
     position: absolute;
     inset: 12px;
-    border: 1px solid var(--color-gold);
-    opacity: 0.8;
+    border: 1px solid #d5b76a;
+    opacity: 0.9;
   }
 
   .is-drawing .body {
@@ -427,38 +436,11 @@ const textureStyle =
     transition: opacity 500ms ease calc(var(--draw-duration) - 300ms);
   }
 
-  /*
-   * Once the card fills the screen, a soft warm light blooms out from its centre in the page's own
-   * ivory, so the navy gives way gently rather than cutting to the light page beneath.
-   */
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at 50% 50%,
-      #f4ebdd calc(var(--bloom) - 45%),
-      rgb(227 201 138 / 0.55) calc(var(--bloom) - 18%),
-      rgb(227 201 138 / 0) var(--bloom)
-    );
-  }
-
-  .envelope.is-blooming .card::before {
-    --bloom: 150%;
-    transition: --bloom var(--bloom-duration, 1100ms) cubic-bezier(0.45, 0, 0.25, 1);
-  }
-
-  /* The light has filled the screen: it fades away over the page, whose hero is already rising in. */
+  /* The card has filled the screen: it fades into the page, whose hero is already rising in. */
   .envelope.is-revealing {
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--reveal-duration, 700ms) ease;
-  }
-
-  @property --bloom {
-    syntax: '<percentage>';
-    inherits: false;
-    initial-value: 0%;
   }
 
   @keyframes glint {

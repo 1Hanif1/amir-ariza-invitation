@@ -129,7 +129,7 @@ test('envelope paints without images', async () => {
     wax: getComputedStyle(document.querySelector('#opening .wax')).backgroundColor,
   }));
   assert.equal(colours.paper, 'rgb(244, 234, 216)');
-  assert.equal(colours.wax, 'rgb(11, 16, 48)');
+  assert.equal(colours.wax, 'rgb(117, 76, 76)');
   await page.closeContext();
 });
 

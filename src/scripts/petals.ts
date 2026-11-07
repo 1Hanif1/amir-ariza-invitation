@@ -34,7 +34,7 @@ interface Piece {
 }
 
 export interface BurstOptions {
-  /** How many pieces in all. About a quarter are gold leaf. */
+  /** How many pieces in all. About a fifth are gold leaf. */
   count: number;
   /** The pieces are released over this long, rather than all at once. */
   releaseMs: number;
@@ -45,7 +45,7 @@ export interface BurstOptions {
 const AIR_DRAG = 2.2; // per second
 const GRAVITY = 0.55; // screen heights per second squared; with the drag, petals settle to about a quarter screen per second
 const FADE_MS = 1200;
-const GOLD_SHARE = 0.25;
+const GOLD_SHARE = 0.18;
 
 const random = (min: number, max: number) => min + Math.random() * (max - min);
 const pick = <T>(items: T[]) => items[Math.floor(Math.random() * items.length)];
@@ -222,31 +222,53 @@ function withShadow(source: Sprite): Sprite {
   return canvas;
 }
 
-/** Stand-in rose petals: ivory, warming to champagne at the base. */
+/**
+ * Petal colours from the main site's palette: each is [tip, body, base], so a petal is pale at its
+ * tip and deepens towards where it met the flower. Rose and saffron appear twice, as the site's
+ * own lilies are mostly those two.
+ */
+const PETAL_COLOURS: [string, string, string][] = [
+  ['#f8ebe4', '#e6c7b8', '#c9988a'], // rose
+  ['#f8ebe4', '#e2bcab', '#bf8c7c'], // deeper rose
+  ['#fbf2d6', '#ead08c', '#cfae5c'], // saffron
+  ['#fcf5df', '#efdba0', '#d5b76a'], // pale saffron
+  ['#f2eaf5', '#d6c4de', '#ad93bc'], // lavender
+  ['#f8e1d2', '#e2ad8c', '#c98d67'], // terracotta
+  ['#fffdf8', '#f4ead8', '#e3c98a'], // ivory
+];
+
+/** Stand-in petals in the site's colours, each colour in three shapes, from slender to round. */
 function drawnPetals(): Sprite[] {
-  return [0.62, 0.72, 0.82].map((roundness) => {
-    const w = 96;
-    const h = 120;
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const c = canvas.getContext('2d')!;
-    const fill = c.createLinearGradient(0, 0, 0, h);
-    fill.addColorStop(0, '#fffdf8');
-    fill.addColorStop(0.55, '#f4ead8');
-    fill.addColorStop(1, '#e3c98a');
-    c.fillStyle = fill;
-    c.beginPath();
-    c.moveTo(w / 2, h * 0.97);
-    c.bezierCurveTo(w * (0.5 - roundness), h * 0.6, w * 0.02, h * 0.05, w * 0.42, h * 0.06);
-    c.quadraticCurveTo(w / 2, h * 0.075, w * 0.58, h * 0.06);
-    c.bezierCurveTo(w * 0.98, h * 0.05, w * (0.5 + roundness), h * 0.6, w / 2, h * 0.97);
-    c.fill();
-    c.strokeStyle = 'rgb(182 143 46 / 0.25)';
-    c.lineWidth = 1;
-    c.stroke();
-    return canvas;
-  });
+  return PETAL_COLOURS.flatMap(([tip, body, base]) =>
+    [0.62, 0.72, 0.82].map((roundness) => {
+      const w = 96;
+      const h = 120;
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const c = canvas.getContext('2d')!;
+      const fill = c.createLinearGradient(0, 0, 0, h);
+      fill.addColorStop(0, tip);
+      fill.addColorStop(0.55, body);
+      fill.addColorStop(1, base);
+      c.fillStyle = fill;
+      c.beginPath();
+      c.moveTo(w / 2, h * 0.97);
+      c.bezierCurveTo(w * (0.5 - roundness), h * 0.6, w * 0.02, h * 0.05, w * 0.42, h * 0.06);
+      c.quadraticCurveTo(w / 2, h * 0.075, w * 0.58, h * 0.06);
+      c.bezierCurveTo(w * 0.98, h * 0.05, w * (0.5 + roundness), h * 0.6, w / 2, h * 0.97);
+      c.fill();
+      // A faint central vein, as on a real petal.
+      c.strokeStyle = base;
+      c.globalAlpha = 0.35;
+      c.lineWidth = 1.5;
+      c.beginPath();
+      c.moveTo(w / 2, h * 0.92);
+      c.quadraticCurveTo(w * 0.53, h * 0.5, w / 2, h * 0.18);
+      c.stroke();
+      return canvas;
+    }),
+  );
 }
 
 /** Stand-in gold leaf: small irregular flakes. */
