@@ -298,7 +298,7 @@ import Art from '../decorative/Art.astro';
     color: var(--color-burgundy);
   }
 
-  /* Event and city stack on phones, so all three columns wrap the same way. */
+  /* The event, then the city on its own line beneath it, at every width. */
   .hero__jump-name {
     display: flex;
     flex-direction: column;
@@ -360,13 +360,7 @@ import Art from '../decorative/Art.astro';
     }
 
     .hero__jump-name {
-      flex-direction: row;
-      gap: 0.25em;
       font-size: 1.0625rem;
-    }
-
-    .hero__jump-event::after {
-      content: ',';
     }
   }
 
