@@ -41,6 +41,19 @@ const jaliTile = `--jali-tile: url('${resolveArt('jali').src}')`;
     <meta property="og:image:alt" content="Painted lilies around the names Amir and Ariza" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <script is:inline>
+      // Claims the page for the envelope before first paint. Without JavaScript none of this
+      // runs, so the envelope stays hidden and the page reads normally. If the envelope's own
+      // script never arrives, the page is released rather than left behind a sealed envelope.
+      (function () {
+        if (!document.documentElement) return;
+        document.documentElement.classList.add('opening-pending');
+        setTimeout(function () {
+          if (!window.__openingReady) document.documentElement.classList.remove('opening-pending');
+        }, 8000);
+      })();
+    </script>
+
     <link rel="preload" href={cormorantRegular} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={cormorantItalic} as="font" type="font/woff2" crossorigin />
   </head>

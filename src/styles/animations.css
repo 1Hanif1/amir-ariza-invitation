@@ -79,3 +79,27 @@
     transform: rotate(0.9deg);
   }
 }
+
+/*
+ * While the envelope is up, the page waits behind it: no scrolling, the nav is hidden, and the
+ * arch, lilies and names hold their entrance until it opens. Unlayered on purpose, so it outranks
+ * the animation shorthands above.
+ */
+html.opening-pending,
+html.opening-running {
+  overflow: hidden;
+}
+
+html.opening-pending :is(.rise, .bloom, .arch-ruling, .arch-fill),
+html.opening-running :is(.rise, .bloom, .arch-ruling, .arch-fill) {
+  animation-play-state: paused;
+}
+
+html.opening-pending .nav,
+html.opening-running .nav {
+  opacity: 0;
+}
+
+.nav {
+  transition: opacity 700ms ease;
+}

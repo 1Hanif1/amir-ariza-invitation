@@ -1,0 +1,457 @@
+---
+/**
+ * The opening: a full-screen ivory envelope with a navy wax seal bearing the AA monogram.
+ * A tap anywhere opens it: the seal lifts away, the flap swings open, rose petals and gold leaf
+ * burst out of the envelope's mouth, then a full-width navy card rises out of the envelope while the
+ * envelope slides down off the screen. Once the card fills the screen it fades away over the page.
+ * The timing lives in src/scripts/opening.ts.
+ *
+ * Shown only when the head script in MainLayout has marked <html class="opening-pending"> before
+ * first paint. Without JavaScript it stays display: none and the page reads normally.
+ *
+ * All images are optional. Drop them into src/assets/envelope (png, jpg or webp) and they are
+ * picked up and compressed at build time:
+ *   envelope-paper.*      the paper. Until then the paper is plain ivory.
+ *   seal-wax.*            the seal's wax surface. Until then the wax is a plain navy gradient.
+ *   petals/petal-*.*      rose petals on a transparent background. Until then, drawn petals.
+ *   petals/gold-leaf-*.*  gold leaf flakes on a transparent background. Until then, drawn flakes.
+ */
+import '@fontsource/marcellus/400.css';
+import { getImage } from 'astro:assets';
+import { couple } from '../../data/wedding';
+
+const textures = import.meta.glob<{ default: ImageMetadata }>(
+  '../../assets/envelope/{envelope-paper,seal-wax}.{png,jpg,jpeg,webp}',
+  { eager: true },
+);
+
+/** The compressed URL of a texture in src/assets/envelope, or null if it is not there yet. */
+async function texture(name: string, width: number): Promise<string | null> {
+  const entry = Object.entries(textures).find(([path]) => path.includes(`/${name}.`));
+  if (!entry) return null;
+  const image = await getImage({ src: entry[1].default, width, format: 'webp', quality: 82 });
+  return image.src;
+}
+
+const paper = await texture('envelope-paper', 2048);
+const wax = await texture('seal-wax', 512);
+
+const petalFiles = import.meta.glob<{ default: ImageMetadata }>(
+  '../../assets/envelope/petals/{petal,gold-leaf}-*.{png,webp}',
+  { eager: true },
+);
+const pieces = await Promise.all(
+  Object.entries(petalFiles).map(async ([path, file]) => {
+    const kind = path.includes('/gold-leaf-') ? 'gold' : 'petal';
+    const image = await getImage({ src: file.default, width: kind === 'gold' ? 128 : 256, format: 'webp', quality: 85 });
+    return { src: image.src, kind };
+  }),
+);
+
+const textureStyle =
+  [paper && `--paper: url('${paper}')`, wax && `--wax: url('${wax}')`].filter(Boolean).join('; ') ||
+  undefined;
+---
+
+<div
+  id="opening"
+  class:list={['envelope', { 'has-wax': wax }]}
+  data-pieces={JSON.stringify(pieces)}
+  style={textureStyle}
+>
+  <div class="body">
+  <div class="piece inside" aria-hidden="true"></div>
+
+  <div class="fold-shadow" aria-hidden="true">
+    <div class="piece side side-left"></div>
+    <div class="piece side side-right"></div>
+  </div>
+  <div class="fold-shadow" aria-hidden="true">
+    <div class="piece bottom"></div>
+  </div>
+
+  <div class="flap" aria-hidden="true">
+    <div class="piece flap-face"></div>
+    <svg class="flap-edge" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <polyline class="for-portrait" points="0,0 50,50 100,0" />
+      <polyline class="for-landscape" points="0,0 50,56 100,0" />
+    </svg>
+  </div>
+
+  <!-- The card inside. Clipped to the envelope's open mouth (and everything above it), so the pocket hides its lower part. -->
+  <div class="card-layer" aria-hidden="true">
+    <div class="card"></div>
+  </div>
+
+  <svg class="frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <rect x="0" y="0" width="100" height="100" />
+  </svg>
+
+  <button class="seal" type="button" data-opening-trigger aria-label={`Open the invitation from ${couple.groom.short} and ${couple.bride.short}`}>
+    <span class="rim" aria-hidden="true"></span>
+    <span class="wax" aria-hidden="true"></span>
+    <span class="monogram" aria-hidden="true"></span>
+  </button>
+
+  <div class="hint-wrap" aria-hidden="true"><p class="hint">Tap to open</p></div>
+  </div>
+</div>
+
+<script>
+  import '../../scripts/opening';
+</script>
+
+<style>
+  /* Hidden unless JavaScript has claimed the page before first paint. */
+  .envelope {
+    display: none;
+  }
+
+  :global(html.opening-pending) .envelope,
+  :global(html.opening-running) .envelope {
+    display: block;
+  }
+
+  .envelope {
+    /* The envelope's own palette and lettering, independent of the page beneath. */
+    --color-cream: #fbf6ec;
+    --color-ivory: #f4ead8;
+    --color-champagne: #e3c98a;
+    --color-gold: #b68f2e;
+    --color-gold-ink: #7e5b1f;
+    --color-night: #0b1030;
+    --font-display: 'Marcellus', Georgia, serif;
+    /* Speeds the whole sequence up for return visits, which open by themselves. Set by the script. */
+    --k: 1;
+    /* Where the flap's point (and the seal) sits, and where the folds meet. */
+    --tip: 50%;
+    --side-apex: 53%;
+    --bottom-apex: 57%;
+    --paper: none;
+    --seal-size: clamp(7rem, 30vmin, 11rem);
+
+    /* How far the envelope slides: right off the bottom, taking its opened flap with it. */
+    --slide: calc(100% + var(--tip) + 5%);
+    --slide-ease: cubic-bezier(0.6, 0, 0.3, 1);
+
+    position: fixed;
+    inset: 0;
+    /* Above the navigation and the music button. */
+    z-index: 100;
+    overflow: hidden;
+    /* Glimpsed above the envelope as it slides away. */
+    background: radial-gradient(ellipse at 50% 20%, #fffdf8, var(--color-cream) 55%, var(--color-ivory));
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (orientation: landscape) {
+    .envelope {
+      --tip: 56%;
+      --side-apex: 58%;
+      --bottom-apex: 60%;
+    }
+  }
+
+  .body {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Every piece is a full-screen sheet of the same paper, cut to shape, so the texture lines up across folds. */
+  .piece {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-ivory);
+    background-image: var(--shade, none), var(--paper);
+    background-size: cover;
+    background-position: center;
+  }
+
+  .inside {
+    --shade: linear-gradient(to bottom, rgb(147 107 41 / 0.16), rgb(147 107 41 / 0.05) 45%, rgb(147 107 41 / 0.08));
+  }
+
+  .fold-shadow {
+    position: absolute;
+    inset: 0;
+    filter: drop-shadow(0 0 2px rgb(74 58 34 / 0.18));
+  }
+
+  .side-left {
+    --shade: linear-gradient(to right, rgb(74 58 34 / 0.02), rgb(74 58 34 / 0.07));
+    clip-path: polygon(0 0, 50% var(--side-apex), 0 100%);
+  }
+
+  .side-right {
+    --shade: linear-gradient(to left, rgb(74 58 34 / 0.02), rgb(74 58 34 / 0.07));
+    clip-path: polygon(100% 0, 100% 100%, 50% var(--side-apex));
+  }
+
+  .bottom {
+    --shade: linear-gradient(to top, rgb(74 58 34 / 0.03), rgb(74 58 34 / 0.09));
+    clip-path: polygon(0 100%, 50% var(--bottom-apex), 100% 100%);
+  }
+
+  /*
+   * The flap carries its own perspective (vanishing point at the hinge), rather than sharing a 3D space
+   * with the rest of the envelope; a shared one let the card's shadow escape its clipping.
+   */
+  .flap {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 0;
+    transform: perspective(1400px) rotateX(0deg);
+    filter: drop-shadow(0 3px 4px rgb(74 58 34 / 0.2));
+  }
+
+  .flap-face {
+    --shade: linear-gradient(to bottom, rgb(255 255 255 / 0.32), rgb(255 255 255 / 0.12));
+    clip-path: polygon(0 0, 100% 0, 50% var(--tip));
+  }
+
+  /* Darkens the flap as it turns away from the light. */
+  .flap-face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgb(147 107 41 / 0.08), rgb(74 58 34 / 0.16));
+    opacity: 0;
+  }
+
+  .flap-edge,
+  .frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+    stroke: var(--color-gold);
+    pointer-events: none;
+  }
+
+  .flap-edge polyline {
+    stroke-width: 1.5px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .for-landscape { display: none; }
+
+  @media (orientation: landscape) {
+    .for-portrait { display: none; }
+    .for-landscape { display: inline; }
+  }
+
+  .frame {
+    inset: 0.75rem;
+    width: calc(100% - 1.5rem);
+    height: calc(100% - 1.5rem);
+    opacity: 0.75;
+  }
+
+  .frame rect {
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* The wax seal. */
+  .seal {
+    position: absolute;
+    left: 50%;
+    top: var(--tip);
+    width: var(--seal-size);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+  }
+
+  .rim,
+  .wax {
+    position: absolute;
+    background: radial-gradient(circle at 38% 32%, #2a3170, var(--color-night) 70%);
+  }
+
+  /* With the wax texture: the same light-from-the-top-left shading, laid thinly over the real wax. */
+  .has-wax .rim,
+  .has-wax .wax {
+    background:
+      radial-gradient(circle at 38% 32%, rgb(42 49 112 / 0.35), rgb(11 16 48 / 0.3) 70%),
+      var(--wax) center / cover,
+      var(--color-night);
+  }
+
+  /* An uneven rim, like pressed wax. */
+  .rim {
+    inset: -4%;
+    border-radius: 47% 53% 49% 51% / 52% 47% 53% 48%;
+    filter: brightness(0.8);
+    box-shadow: 0 5px 14px rgb(11 16 48 / 0.35);
+  }
+
+  .wax {
+    inset: 0;
+    border-radius: 50%;
+    box-shadow:
+      inset 0 2px 3px rgb(255 255 255 / 0.22),
+      inset 0 -4px 8px rgb(0 0 0 / 0.45);
+  }
+
+  /* A slow glint of light across the wax. */
+  .wax::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(115deg, transparent 38%, rgb(255 240 205 / 0.28) 50%, transparent 62%);
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    animation: glint 5s ease-in-out 1.2s infinite;
+    pointer-events: none;
+  }
+
+  .seal:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 8px;
+  }
+
+  /* Positioned so it paints above the wax layers. */
+  .monogram {
+    position: relative;
+    width: 80%;
+    aspect-ratio: 99.27 / 81.2;
+    background: linear-gradient(160deg, var(--color-champagne), var(--color-gold) 85%);
+    -webkit-mask: url('/art/aa-monogram.svg') center / contain no-repeat;
+    mask: url('/art/aa-monogram.svg') center / contain no-repeat;
+  }
+
+  .hint-wrap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--tip) + var(--seal-size) / 2 + 1.75rem);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .hint {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-gold-ink);
+    opacity: 0;
+    animation: hint-in 1.2s ease 2s forwards;
+  }
+
+  /* Opening sequence. */
+  .envelope.is-open { cursor: default; }
+
+  .is-open .seal {
+    pointer-events: none;
+    opacity: 0;
+    scale: 1.15;
+    transition: opacity 450ms ease, scale 450ms ease;
+  }
+
+  .is-open .wax::after { animation: none; }
+
+  .is-open .hint-wrap,
+  .is-open .frame {
+    opacity: 0;
+    transition: opacity 400ms ease;
+  }
+
+  .is-open .flap {
+    transform: perspective(1400px) rotateX(180deg);
+    transition: transform calc(1100ms * var(--k)) cubic-bezier(0.6, 0.05, 0.3, 1) calc(200ms * var(--k));
+  }
+
+  .is-open .flap-face::after {
+    opacity: 1;
+    transition: opacity 700ms ease 300ms;
+  }
+
+  /*
+   * The card: a full-width navy sheet hidden in the envelope's pocket. It rises out of the open mouth
+   * while the envelope slides down off the screen, and ends exactly filling the screen.
+   * Both move on the same curve, so on screen the card's top edge glides steadily up to the top.
+   */
+  .card-layer {
+    position: absolute;
+    inset: 0;
+    /* Only the envelope's open mouth and everything above it, so the pocket hides the rest of the card. */
+    clip-path: polygon(0 -300%, 100% -300%, 100% 0, 50% var(--side-apex), 0 0);
+  }
+
+  .card {
+    position: absolute;
+    inset: 0;
+    /* The card is exactly the envelope's height, so these percentages match the envelope's own. */
+    translate: 0 calc(var(--side-apex) + 1%);
+    background: var(--color-night);
+    /* A fine paper edge. (No outer shadow: Chrome let it leak past the pocket's clipping.) */
+    border-top: 1px solid rgb(227 201 138 / 0.45);
+  }
+
+  /* A thin gold rule inset from the card's edge, which fades once the card has filled the screen. */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px solid var(--color-gold);
+    opacity: 0.8;
+  }
+
+  .is-drawing .body {
+    translate: 0 var(--slide);
+    transition: translate var(--draw-duration) var(--slide-ease);
+  }
+
+  /* In the envelope's own coordinates the card rises by the slide distance, so on screen it ends at the top. */
+  .is-drawing .card {
+    translate: 0 calc(-1 * var(--slide));
+    transition: translate var(--draw-duration) var(--slide-ease);
+  }
+
+  .is-drawing .card::after {
+    opacity: 0;
+    transition: opacity 500ms ease calc(var(--draw-duration) - 300ms);
+  }
+
+  /* The card has filled the screen: it fades away over the page, whose hero is already rising in. */
+  .envelope.is-revealing {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--reveal-duration, 700ms) ease;
+  }
+
+  @keyframes glint {
+    0%, 55% { background-position: 100% 0; }
+    85%, 100% { background-position: 0 0; }
+  }
+
+  @keyframes hint-in {
+    to { opacity: 1; }
+  }
+
+  /* Guests who have turned motion off: no shimmer, no swinging flap, no petals; the envelope just fades away. */
+  @media (prefers-reduced-motion: reduce) {
+    .wax::after { animation: none; }
+    .hint { animation-duration: 0.01ms; }
+    .is-open .seal { scale: 1; }
+    .is-open .flap { transform: none; transition: none; }
+    .envelope.is-open {
+      opacity: 0;
+      transition: opacity 600ms ease;
+    }
+  }
+</style>
