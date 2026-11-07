@@ -3,6 +3,7 @@ import type { WeddingEvent } from '../../data/wedding';
 import { directionsUrl } from '../../data/wedding';
 import type { ArtName } from '../../data/assets';
 import Art from '../decorative/Art.astro';
+import RuledLink from '../ui/RuledLink.astro';
 
 interface Props {
   event: WeddingEvent;
@@ -70,9 +71,15 @@ const { event, lily, side } = Astro.props;
       <address class="chapter__address">
         {event.venue.address.map((line) => <span>{line}</span>)}
       </address>
-      <a class="chapter__directions" href={directionsUrl(event.venue.mapsDestination)} target="_blank" rel="noopener noreferrer">
-        Get directions<span class="sr-only"> to {event.venue.name} on Google Maps (opens in a new tab)</span>
-      </a>
+      <div class="chapter__directions">
+        <RuledLink
+          href={directionsUrl(event.venue.mapsDestination)}
+          label="Get directions"
+          srLabel={` to ${event.venue.name} on Google Maps (opens in a new tab)`}
+          external
+          pin
+        />
+      </div>
     </div>
 
     {event.host && <p class="chapter__host serif">{event.host}</p>}
@@ -396,27 +403,10 @@ const { event, lily, side } = Astro.props;
     color: var(--color-ink-soft);
   }
 
-  /* Directions sit under a small arch, echoing the album's doorway. */
+  /* Directions: a double-ruled stationery button (see RuledLink). */
   .chapter__directions {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 3rem;
-    margin-top: 1rem;
-    padding: 0.5rem 1.75rem;
-    border: 1px solid var(--accent);
-    border-radius: 1.5rem 1.5rem 0.25rem 0.25rem;
-    font-weight: 500;
-    color: var(--accent);
-    text-decoration: none;
-    transition:
-      background-color 250ms ease,
-      color 250ms ease;
-  }
-
-  .chapter__directions:hover {
-    background: var(--accent);
-    color: var(--color-ivory);
+    margin-top: 1.25rem;
+    --on-accent: var(--color-ivory);
   }
 
   .chapter__body .chapter__host {
@@ -472,8 +462,9 @@ const { event, lily, side } = Astro.props;
     color: color-mix(in srgb, var(--color-ivory) 90%, transparent);
   }
 
-  .chapter--rose .chapter__directions:hover {
-    color: var(--color-burgundy);
+  /* On the burgundy page the button is ivory, and fills ivory with burgundy lettering. */
+  .chapter--rose .chapter__directions {
+    --on-accent: var(--color-burgundy);
   }
 
   .chapter--rose :focus-visible {
