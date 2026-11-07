@@ -85,15 +85,27 @@ import FloralDivider from '../decorative/FloralDivider.astro';
     margin: 0;
   }
 
-  /* Margin vines, in the space beside the arch. Only shown where that space exists. */
+  /*
+   * Margin vines, in the space beside the arch. Sized from that space, not from the screen, so
+   * they sit in the margin's middle at any width. The artwork's strand fills the middle ~45% of
+   * its box, so a box 1.6 x the margin keeps the leaves clear of the arch and the screen edge.
+   */
+  .invite {
+    --vine-margin: calc((100% - var(--arch-width)) / 2);
+    --vine-width: min(var(--vine-margin) * 1.6, 22rem);
+  }
+
   .invite__vine {
     display: none;
     position: absolute;
     top: 4rem;
-    width: auto;
-    height: calc(100% - 8rem);
+    width: var(--vine-width);
+    height: auto;
+    max-height: calc(100% - 8rem);
     max-width: none;
     object-fit: contain;
+    object-position: top;
+    pointer-events: none;
   }
 
   .invite__opening {
@@ -239,40 +251,75 @@ import FloralDivider from '../decorative/FloralDivider.astro';
     }
   }
 
-  @media (min-width: 84rem) {
+  /* Wide, landscape screens: there is room beside the arch for the vines. */
+  @media (min-width: 72rem) and (min-aspect-ratio: 3/2) {
     .invite__vine {
       display: block;
     }
 
-    /* The vines climb a little slower than the page, so the margins have depth. */
+    .invite__vine--left {
+      left: calc(var(--vine-margin) / 2 - var(--vine-width) / 2);
+    }
+
+    .invite__vine--right {
+      right: calc(var(--vine-margin) / 2 - var(--vine-width) / 2);
+    }
+
+    /*
+     * As the guest reads down, each strand trails down its margin a little ahead of them, its tip
+     * feathered so leaves and blossoms open into view rather than being cut. The vines also climb
+     * a little slower than the page, so the margins have depth.
+     */
     @media (prefers-reduced-motion: no-preference) {
       @supports (animation-timeline: view()) {
         .invite__vine {
-          animation: vine-drift linear both;
+          --vine-grow: 110%;
+          -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--vine-grow) - 10%), transparent var(--vine-grow));
+          mask-image: linear-gradient(to bottom, #000 calc(var(--vine-grow) - 10%), transparent var(--vine-grow));
+          animation:
+            vine-trail linear both,
+            vine-drift linear both;
         }
 
         /* The timeline sits in its own rule, with a doubled class: in the same rule the minifier folds it into the animation shorthand, which browsers reject. */
         .invite__vine.invite__vine {
-          animation-timeline: view();
+          animation-timeline: view(), view();
+          animation-range:
+            cover 15vh cover calc(100% - 70vh),
+            normal;
+        }
+
+        /* The right-hand strand follows a beat behind the left. */
+        .invite__vine.invite__vine--right {
+          animation-range:
+            cover 22vh cover calc(100% - 62vh),
+            normal;
         }
       }
     }
+  }
 
-    .invite__vine--left {
-      left: calc((100vw - var(--arch-width)) / 2 - 11.5rem);
+  @property --vine-grow {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 110%;
+  }
+
+  @keyframes vine-trail {
+    from {
+      --vine-grow: 0%;
     }
-
-    .invite__vine--right {
-      right: calc((100vw - var(--arch-width)) / 2 - 11.5rem);
+    to {
+      --vine-grow: 110%;
     }
   }
 
   @keyframes vine-drift {
     from {
-      translate: 0 -5rem;
+      translate: 0 -3rem;
     }
     to {
-      translate: 0 5rem;
+      translate: 0 3rem;
     }
   }
 </style>
