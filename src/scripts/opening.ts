@@ -3,7 +3,7 @@
  * decides when each step starts, then hands the page back to the guest.
  *
  *   0      the seal lifts away and the flap swings open      (.is-open)
- *   600    petals and gold leaf burst out of the open mouth
+ *   600    petals and gold leaf drift up out of the open mouth
  *   1000   the card rises while the envelope slides down     (.is-drawing)
  *   2600   the card fills the screen; the page is released and
  *          the card fades into it                            (.is-revealing)
@@ -15,7 +15,7 @@ import { DURATION_MS, hasOpenedBefore, planOpening, rememberOpened, type Opening
 import { burstPieces, preloadPieces, type PieceImage } from './petals';
 
 const PETALS_AT = 600;
-const PETAL_RELEASE = 650;
+const PETAL_RELEASE = 1800;
 const DRAW_AT = 1000;
 const DRAW_DURATION = 1600;
 /** The fade from the card to the page fills the rest of the tapped opening. */
@@ -112,7 +112,7 @@ if (opening && trigger && root.classList.contains('opening-pending')) {
     at(PETALS_AT, async () => {
       if (!sprites) return;
       burstPieces(await sprites, {
-        count: portrait ? 110 : 150,
+        count: portrait ? 40 : 55,
         releaseMs: PETAL_RELEASE * k,
         mouth: { tipX: 0.5, tipY: portrait ? 0.5 : 0.56 },
       });

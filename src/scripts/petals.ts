@@ -1,6 +1,6 @@
 /**
  * A burst of rose petals and gold leaf, drawn on a full-screen canvas laid over the page.
- * Petals shoot up out of a region, slow against the air, then tumble and sway down and fade.
+ * Petals lift gently out of a region, then tumble and sway down, fanning apart as they fall, and fade.
  *
  * Uses the generated images when they are there; otherwise draws simple petals and flakes itself.
  */
@@ -21,6 +21,10 @@ interface Piece {
   y: number;
   vx: number;
   vy: number;
+  /** The sideways speed the air settles the piece into, so the pieces fan out as they fall instead of dropping as a clump. */
+  driftX: number;
+  /** How fast this piece falls compared with the others, so they also spread out top to bottom. */
+  fallRate: number;
   size: number;
   rotation: number;
   spin: number;
@@ -42,8 +46,8 @@ export interface BurstOptions {
   mouth: { tipX: number; tipY: number };
 }
 
-const AIR_DRAG = 2.2; // per second
-const GRAVITY = 0.55; // screen heights per second squared; with the drag, petals settle to about a quarter screen per second
+const AIR_DRAG = 1.6; // per second
+const GRAVITY = 0.28; // screen heights per second squared; with the drag, petals settle to about a sixth of a screen per second
 const FADE_MS = 1200;
 const GOLD_SHARE = 0.18;
 
@@ -127,19 +131,22 @@ export function burstPieces(sprites: Map<PieceKind, Sprite[]>, options: BurstOpt
       kind,
       x,
       y,
-      vx: (outward * random(0.8, 1.6) + random(-0.6, 0.6)) * width,
-      vy: -random(0.3, 0.85) * height,
+      // A gentle lift out of the envelope, not a burst.
+      vx: (outward * random(0.1, 0.3) + random(-0.08, 0.08)) * width,
+      vy: -random(0.06, 0.2) * height,
+      driftX: (outward * random(0.08, 0.18) + random(-0.07, 0.07)) * width,
+      fallRate: random(0.6, 1.4),
       // Never smaller than about 22px, so petals still read on a phone.
       size: Math.max(shortSide * 0.05, 26) * (kind === 'petal' ? random(0.85, 1.45) : random(0.4, 0.65)),
       rotation: random(0, Math.PI * 2),
-      spin: random(-3.2, 3.2),
+      spin: random(-2.4, 2.4),
       flipPhase: random(0, Math.PI * 2),
-      flipSpeed: random(2, 5.5),
+      flipSpeed: random(1.5, 4),
       swayPhase: random(0, Math.PI * 2),
-      swaySpeed: random(1.2, 2.4),
-      swayAmount: random(0.012, 0.03) * width,
+      swaySpeed: random(0.8, 1.8),
+      swayAmount: random(0.015, 0.04) * width,
       bornAt: start + (index / options.count) * options.releaseMs,
-      diesAt: start + options.releaseMs + random(4200, 6000),
+      diesAt: start + options.releaseMs + random(6000, 8500),
     };
   });
 
@@ -163,8 +170,8 @@ export function burstPieces(sprites: Map<PieceKind, Sprite[]>, options: BurstOpt
         alive++;
 
         const age = (now - piece.bornAt) / 1000;
-        piece.vx += -AIR_DRAG * piece.vx * dt;
-        piece.vy += (GRAVITY * height - AIR_DRAG * piece.vy) * dt;
+        piece.vx += -AIR_DRAG * (piece.vx - piece.driftX) * dt;
+        piece.vy += (GRAVITY * piece.fallRate * height - AIR_DRAG * piece.vy) * dt;
         piece.x += piece.vx * dt;
         piece.y += piece.vy * dt;
         piece.rotation += piece.spin * dt;
@@ -174,7 +181,7 @@ export function burstPieces(sprites: Map<PieceKind, Sprite[]>, options: BurstOpt
         const sway = Math.sin(age * piece.swaySpeed + piece.swayPhase) * piece.swayAmount * Math.min(age, 1);
         // Tumbling: squashing one axis reads as the piece turning over in the air.
         const flip = Math.cos(age * piece.flipSpeed + piece.flipPhase);
-        const fade = Math.min(1, (piece.diesAt - now) / FADE_MS, age / 0.15);
+        const fade = Math.min(1, (piece.diesAt - now) / FADE_MS, age / 0.45);
 
         context.save();
         context.translate(piece.x + sway, piece.y);
