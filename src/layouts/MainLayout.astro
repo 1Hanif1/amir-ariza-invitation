@@ -2,12 +2,15 @@
 import '@fontsource/cormorant-garamond/500.css';
 import '@fontsource/cormorant-garamond/500-italic.css';
 import '@fontsource/cormorant-garamond/600.css';
-import '@fontsource-variable/dm-sans';
+import '@fontsource/luxurious-script/400.css';
+import '@fontsource/marcellus/400.css';
 import '../styles/global.css';
 import '../styles/animations.css';
 
 import cormorantRegular from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff2?url';
 import cormorantItalic from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-italic.woff2?url';
+import scriptFont from '@fontsource/luxurious-script/files/luxurious-script-latin-400-normal.woff2?url';
+import displayFont from '@fontsource/marcellus/files/marcellus-latin-400-normal.woff2?url';
 
 import { site } from '../data/wedding';
 import { resolveArt } from '../lib/art';
@@ -56,6 +59,8 @@ const jaliTile = `--jali-tile: url('${resolveArt('jali').src}')`;
 
     <link rel="preload" href={cormorantRegular} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={cormorantItalic} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={scriptFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <slot />

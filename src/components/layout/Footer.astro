@@ -8,7 +8,7 @@ import FloralDivider from '../decorative/FloralDivider.astro';
   <div class="footer__inner" data-draw="rule">
     <Art name="lily-crown" class="footer__crown" data-draw="grow" />
     <Art name="aa-monogram" class="footer__monogram" />
-    <p class="footer__names serif" data-write>{couple.groom.full} <span>&amp;</span> {couple.bride.full}</p>
+    <p class="footer__names script" data-write>{couple.groom.full} <span>&amp;</span> {couple.bride.full}</p>
     <p class="footer__date">
       <time datetime={couple.date.iso}>{couple.date.display}</time>
     </p>
@@ -67,13 +67,15 @@ import FloralDivider from '../decorative/FloralDivider.astro';
 
   .footer__names {
     margin: 1rem auto 0;
-    max-width: 32rem;
-    font-size: 1.5rem;
-    line-height: 1.25;
+    max-width: 34rem;
+    font-size: 2.25rem;
+    line-height: 1.2;
     text-wrap: balance;
   }
 
   .footer__names span {
+    font-family: var(--font-serif);
+    font-size: 0.7em;
     font-style: italic;
   }
 

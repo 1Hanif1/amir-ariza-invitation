@@ -35,12 +35,12 @@ import FloralDivider from '../decorative/FloralDivider.astro';
 
     <div class="invite__couple" data-reveal>
       <div class="invite__person invite__person--groom">
-        <p class="invite__person-name serif" data-write>{invitation.groom.name}</p>
+        <p class="invite__person-name script" data-write>{invitation.groom.name}</p>
         <p class="invite__small">{invitation.groom.parents}</p>
       </div>
       <p class="invite__joiner serif">{invitation.joiner}</p>
       <div class="invite__person invite__person--bride">
-        <p class="invite__person-name serif" data-write style="--write-delay: 250ms">{invitation.bride.name}</p>
+        <p class="invite__person-name script" data-write style="--write-delay: 250ms">{invitation.bride.name}</p>
         <p class="invite__small">{invitation.bride.parents}</p>
       </div>
     </div>
@@ -118,14 +118,14 @@ import FloralDivider from '../decorative/FloralDivider.astro';
 
   .invite .invite__invocation {
     margin-top: 0.875rem;
-    font-size: 1rem;
+    font-size: 1.125rem;
     line-height: 1.6;
     color: var(--color-ink-soft);
     text-wrap: balance;
   }
 
   .invite__small {
-    font-size: 0.9375rem;
+    font-size: 1.0625rem;
     line-height: 1.5;
     color: var(--color-ink-soft);
     text-wrap: balance;
@@ -164,9 +164,9 @@ import FloralDivider from '../decorative/FloralDivider.astro';
   }
 
   .invite__person-name {
-    font-size: clamp(2rem, 5.2vw, 3.125rem);
-    font-weight: 600;
-    line-height: 1.08;
+    font-size: clamp(2.625rem, 7vw, 4.25rem);
+    line-height: 1.12;
+    color: var(--color-ink);
     text-wrap: balance;
   }
 

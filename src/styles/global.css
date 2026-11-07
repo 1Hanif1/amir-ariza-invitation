@@ -20,8 +20,14 @@
   --color-saffron-ink: #8a6414;
   --color-teal-ink: #3f6470;
 
-  --font-display: 'Cormorant Garamond', 'Cormorant Fallback', Georgia, serif;
-  --font-body: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /*
+   * Heirloom type. Luxurious Script carries the couple's names only; Marcellus the titles,
+   * labels and navigation; Cormorant Garamond everything else, from dates to body text.
+   */
+  --font-script: 'Luxurious Script', 'Snell Roundhand', cursive;
+  --font-display: 'Marcellus', 'Cormorant Fallback', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', 'Cormorant Fallback', Georgia, serif;
+  --font-body: 'Cormorant Garamond', 'Cormorant Fallback', Georgia, serif;
   --font-arabic: 'Amiri', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
 }
 
@@ -64,8 +70,9 @@
     background: var(--color-parchment);
     color: var(--color-ink);
     font-family: var(--font-body);
-    font-size: 1.0625rem;
-    line-height: 1.6;
+    font-size: 1.1875rem;
+    font-weight: 500;
+    line-height: 1.55;
     /* Cormorant's default old-style figures make "11" read as the Roman numeral II. */
     font-variant-numeric: lining-nums;
     -webkit-font-smoothing: antialiased;
@@ -95,8 +102,23 @@
 
 @layer components {
   .serif {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
     font-weight: 500;
+  }
+
+  /* The couple's names. */
+  .script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0;
+  }
+
+  /* Titles, labels and the navigation. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-style: normal;
   }
 
   /* Repeating jali lattice. Sits behind a section's content. */
