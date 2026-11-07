@@ -1,0 +1,29 @@
+
+> amir-ariza-wedding@1.0.0 build
+> astro check && astro build
+
+[2m12:13:32[22m [34m[types][39m Generated [2m103ms[22m
+[2m12:13:32[22m [34m[check][39m Getting diagnostics for Astro files in C:\Users\hanif\Desktop\wedding-invitation...
+Result (28 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+[2m12:13:36[22m [34m[types][39m Generated [2m85ms[22m
+[2m12:13:36[22m [34m[build][39m output: [34m"static"[39m
+[2m12:13:36[22m [34m[build][39m mode: [34m"static"[39m
+[2m12:13:36[22m [34m[build][39m directory: [34mC:\Users\hanif\Desktop\wedding-invitation\dist\[39m
+[2m12:13:36[22m [34m[build][39m Collecting build info...
+[2m12:13:36[22m [34m[build][39m [32m✓ Completed in 115ms.[39m
+[2m12:13:36[22m [34m[build][39m Building static entrypoints...
+[2m12:13:37[22m [34m[vite][39m [32m✓ built in 320ms[39m
+[2m12:13:37[22m [34m[vite][39m [32m✓ built in 50ms[39m
+[2m12:13:37[22m [34m[build][39m Rearranging server assets...
+
+[42m[30m generating static routes [39m[49m
+[2m12:13:37[22m   [34m├─[39m [2m/index.html[22m [2m(+29ms)[22m 
+[2m12:13:37[22m [32m✓ Completed in 55ms.
+[39m
+[2m12:13:37[22m [34m[build][39m [32m✓ Completed in 774ms.[39m
+[2m12:13:37[22m [34m[build][39m 1 page(s) built in [1m911ms[22m
+[2m12:13:37[22m [34m[build][39m [1mComplete![22m

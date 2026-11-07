@@ -1,0 +1,95 @@
+<style>
+  .flow { display: flex; flex-direction: column; gap: 2.5rem; margin-top: 1.5rem; }
+  .route h3 { margin: 0 0 .25rem; }
+  .route .who { margin: 0 0 1rem; opacity: .75; font-size: .95rem; }
+  .row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+  .arrow { font-size: 1.6rem; opacity: .55; padding: 0 .25rem; }
+  .arrow small { display: block; font-size: .7rem; text-align: center; opacity: .9; }
+  .phone {
+    width: 150px; height: 270px; border-radius: 18px; border: 2px solid rgba(128,128,128,.45);
+    padding: 10px 9px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px;
+    font-size: .68rem; line-height: 1.25; background: rgba(128,128,128,.06); position: relative;
+  }
+  .phone .cap { position: absolute; bottom: -1.6rem; left: 0; right: 0; text-align: center; font-size: .75rem; opacity: .8; }
+  .blk { border-radius: 6px; padding: 6px; background: rgba(128,128,128,.14); text-align: center; }
+  .env { flex: 1; display: flex; align-items: center; justify-content: center; position: relative;
+         background: linear-gradient(160deg, #e9d6c4, #d9bfa8); color: #5a3e3a; border-radius: 8px; }
+  .env::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+         clip-path: polygon(0 0, 100% 0, 50% 100%); background: rgba(90,62,58,.12); }
+  .seal { width: 34px; height: 34px; border-radius: 50%; background: #b8893a; color: #fff8e8;
+          display: flex; align-items: center; justify-content: center; font-size: .55rem; z-index: 1; }
+  .ev { padding: 8px 6px; border-radius: 8px; font-weight: 600; }
+  .haldi { background: #f0d98c; color: #5a4310; }
+  .nikah { background: #cdbbe0; color: #3e2d55; }
+  .recep { background: #ecc3c0; color: #5e2f2c; }
+  .full { flex: 1; display: flex; flex-direction: column; gap: 6px; justify-content: center; border-radius: 8px; padding: 8px; }
+  .back { font-size: .62rem; opacity: .8; text-align: left; }
+  .lock { font-size: .62rem; opacity: .85; text-align: center; border-top: 1px dashed currentColor; padding-top: 4px; }
+  .note { margin-top: 2.2rem; font-size: .9rem; opacity: .85; }
+  .portal { display: inline-block; border: 2px solid currentColor; border-radius: 40px 40px 6px 6px; width: 22px; height: 28px; vertical-align: middle; opacity: .6; }
+</style>
+
+<h2>How the site would fit together</h2>
+<p class="subtitle">One website, two kinds of link. This is a structure sketch, not the look; colours and fonts come later.</p>
+
+<div class="flow">
+
+  <div class="route">
+    <h3>Link 1: the main link</h3>
+    <p class="who">My guess: close family and friends, who are invited to everything</p>
+    <div class="row">
+      <div class="phone">
+        <div class="env"><div class="seal">Tap to<br>open</div></div>
+        <div class="cap">Envelope</div>
+      </div>
+      <div class="arrow">→<small>opens</small></div>
+      <div class="phone">
+        <div class="blk">Bismillah</div>
+        <div class="blk">Amir &amp; Ariza<br>invitation</div>
+        <div class="ev haldi">Haldi · Mumbai</div>
+        <div class="ev nikah">Nikah · Lucknow</div>
+        <div class="ev recep">Reception · Mumbai</div>
+        <div class="blk">Blessing</div>
+        <div class="cap">Main page</div>
+      </div>
+      <div class="arrow">→<small>tap a card<br><span class="portal"></span><br>portal</small></div>
+      <div class="phone">
+        <div class="full nikah">
+          <div class="back">← All celebrations</div>
+          <div><strong>Nikah</strong></div>
+          <div>17 Dec · Lucknow</div>
+          <div>Programme</div>
+          <div>Venue + directions</div>
+        </div>
+        <div class="cap">Event page</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="route">
+    <h3>Link 2, 3, 4: one link per event</h3>
+    <p class="who">For guests invited to only one event, e.g. Nikah-only guests in Lucknow</p>
+    <div class="row">
+      <div class="phone">
+        <div class="env"><div class="seal">Tap to<br>open</div></div>
+        <div class="cap">Same envelope</div>
+      </div>
+      <div class="arrow">→<small>opens straight<br>into the event</small></div>
+      <div class="phone">
+        <div class="blk">Bismillah</div>
+        <div class="full nikah">
+          <div><strong>Nikah</strong></div>
+          <div>17 Dec · Lucknow</div>
+          <div>Amir &amp; Ariza</div>
+          <div>Programme</div>
+          <div>Venue + directions</div>
+          <div class="lock">no link to the other events</div>
+        </div>
+        <div class="cap">Nikah only</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">The event links would use addresses that can't be guessed (something like <code>/i/k7q2</code> rather than <code>/haldi</code>), so a Nikah guest can't find the Reception by typing a different word.</p>

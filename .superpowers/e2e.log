@@ -1,0 +1,92 @@
+
+> amir-ariza-wedding@1.0.0 test:e2e
+> node --experimental-strip-types --test --test-concurrency=1 "tests/e2e/**/*.test.mjs"
+
+TAP version 13
+# Subtest: first visit waits for a tap
+ok 1 - first visit waits for a tap
+  ---
+  duration_ms: 3585.8008
+  type: 'test'
+  ...
+# Subtest: hero holds its entrance until the letter arrives
+ok 2 - hero holds its entrance until the letter arrives
+  ---
+  duration_ms: 9064.9176
+  type: 'test'
+  ...
+# Subtest: tap opens into the hero
+ok 3 - tap opens into the hero
+  ---
+  duration_ms: 4514.7499
+  type: 'test'
+  ...
+# Subtest: keyboard opens it
+ok 4 - keyboard opens it
+  ---
+  duration_ms: 4515.0534
+  type: 'test'
+  ...
+# Subtest: double tap runs once
+ok 5 - double tap runs once
+  ---
+  duration_ms: 5116.8855
+  type: 'test'
+  ...
+# Subtest: storage blocked still opens
+ok 6 - storage blocked still opens
+  ---
+  duration_ms: 4541.3588
+  type: 'test'
+  ...
+# Subtest: envelope paints without images
+ok 7 - envelope paints without images
+  ---
+  duration_ms: 267.7037
+  type: 'test'
+  ...
+# Subtest: laptop keeps envelope phone-sized
+ok 8 - laptop keeps envelope phone-sized
+  ---
+  duration_ms: 4529.9107
+  type: 'test'
+  ...
+# Subtest: no JavaScript shows the page
+ok 9 - no JavaScript shows the page
+  ---
+  duration_ms: 258.2446
+  type: 'test'
+  ...
+# Subtest: return visit opens by itself
+ok 10 - return visit opens by itself
+  ---
+  duration_ms: 2659.3556
+  type: 'test'
+  ...
+# Subtest: reduced motion fades
+ok 11 - reduced motion fades
+  ---
+  duration_ms: 983.9699
+  type: 'test'
+  ...
+# Subtest: reduced motion return visit
+ok 12 - reduced motion return visit
+  ---
+  duration_ms: 1293.1604
+  type: 'test'
+  ...
+# Subtest: hash link lands on its section
+ok 13 - hash link lands on its section
+  ---
+  duration_ms: 4916.9935
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 46758.6987

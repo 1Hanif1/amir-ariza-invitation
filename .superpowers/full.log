@@ -1,0 +1,309 @@
+
+> amir-ariza-wedding@1.0.0 test
+> npm run build && npm run test:unit && npm run test:dist && npm run test:e2e
+
+
+> amir-ariza-wedding@1.0.0 build
+> astro check && astro build
+
+[2m12:17:00[22m [34m[types][39m Generated [2m90ms[22m
+[2m12:17:00[22m [34m[check][39m Getting diagnostics for Astro files in C:\Users\hanif\Desktop\wedding-invitation...
+Result (31 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+[2m12:17:04[22m [34m[types][39m Generated [2m82ms[22m
+[2m12:17:04[22m [34m[build][39m output: [34m"static"[39m
+[2m12:17:04[22m [34m[build][39m mode: [34m"static"[39m
+[2m12:17:04[22m [34m[build][39m directory: [34mC:\Users\hanif\Desktop\wedding-invitation\dist\[39m
+[2m12:17:04[22m [34m[build][39m Collecting build info...
+[2m12:17:04[22m [34m[build][39m [32m✓ Completed in 123ms.[39m
+[2m12:17:04[22m [34m[build][39m Building static entrypoints...
+[2m12:17:04[22m [34m[vite][39m [32m✓ built in 373ms[39m
+[2m12:17:04[22m [34m[vite][39m [32m✓ built in 54ms[39m
+[2m12:17:04[22m [34m[build][39m Rearranging server assets...
+
+[42m[30m generating static routes [39m[49m
+[2m12:17:05[22m   [34m├─[39m [2m/index.html[22m [2m(+17ms)[22m 
+[2m12:17:05[22m [32m✓ Completed in 44ms.
+[39m
+[2m12:17:05[22m [34m[build][39m [32m✓ Completed in 827ms.[39m
+[2m12:17:05[22m [34m[build][39m 1 page(s) built in [1m966ms[22m
+[2m12:17:05[22m [34m[build][39m [1mComplete![22m
+
+> amir-ariza-wedding@1.0.0 test:unit
+> node --experimental-strip-types --test "tests/unit/**/*.test.mjs"
+
+TAP version 13
+# Subtest: no track means no audio
+ok 1 - no track means no audio
+  ---
+  duration_ms: 2.0219
+  type: 'test'
+  ...
+# Subtest: a single track is found by its extension
+ok 2 - a single track is found by its extension
+  ---
+  duration_ms: 1.2431
+  type: 'test'
+  ...
+# Subtest: mp3 wins when several formats exist
+ok 3 - mp3 wins when several formats exist
+  ---
+  duration_ms: 1.1553
+  type: 'test'
+  ...
+# Subtest: a missing public folder means no audio
+ok 4 - a missing public folder means no audio
+  ---
+  duration_ms: 0.2894
+  type: 'test'
+  ...
+# Subtest: no storage means a first visit
+ok 5 - no storage means a first visit
+  ---
+  duration_ms: 0.8331
+  type: 'test'
+  ...
+# Subtest: a stored flag means a return visit
+ok 6 - a stored flag means a return visit
+  ---
+  duration_ms: 0.1372
+  type: 'test'
+  ...
+# Subtest: an empty store means a first visit
+ok 7 - an empty store means a first visit
+  ---
+  duration_ms: 0.0989
+  type: 'test'
+  ...
+# Subtest: storage that throws is treated as a first visit and never throws
+ok 8 - storage that throws is treated as a first visit and never throws
+  ---
+  duration_ms: 0.2409
+  type: 'test'
+  ...
+# Subtest: remembering stores the flag under the opening key
+ok 9 - remembering stores the flag under the opening key
+  ---
+  duration_ms: 0.8065
+  type: 'test'
+  ...
+# Subtest: planOpening covers every visit and motion combination
+ok 10 - planOpening covers every visit and motion combination
+  ---
+  duration_ms: 0.2358
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 138.5704
+
+> amir-ariza-wedding@1.0.0 test:dist
+> node --test "tests/dist/**/*.test.mjs"
+
+TAP version 13
+# Subtest: hero is the letter
+ok 1 - hero is the letter
+  ---
+  duration_ms: 2.505
+  type: 'test'
+  ...
+# Subtest: hero names can take focus after the opening
+ok 2 - hero names can take focus after the opening
+  ---
+  duration_ms: 0.8548
+  type: 'test'
+  ...
+# Subtest: hero drops the monogram and lilies
+ok 3 - hero drops the monogram and lilies
+  ---
+  duration_ms: 0.735
+  type: 'test'
+  ...
+# Subtest: date links sit after the letter
+ok 4 - date links sit after the letter
+  ---
+  duration_ms: 0.573
+  type: 'test'
+  ...
+# Subtest: invitation is framed in gold
+ok 5 - invitation is framed in gold
+  ---
+  duration_ms: 0.5682
+  type: 'test'
+  ...
+# Subtest: no removed colour survives
+ok 6 - no removed colour survives
+  ---
+  duration_ms: 8.0378
+  type: 'test'
+  ...
+# Subtest: heirloom fonts are loaded and DM Sans is gone
+ok 7 - heirloom fonts are loaded and DM Sans is gone
+  ---
+  duration_ms: 2.9221
+  type: 'test'
+  ...
+# Subtest: theme colour is Night
+ok 8 - theme colour is Night
+  ---
+  duration_ms: 0.4454
+  type: 'test'
+  ...
+# Subtest: reception chapter is night
+ok 9 - reception chapter is night
+  ---
+  duration_ms: 2.131
+  type: 'test'
+  ...
+# Subtest: hidden painted art is not rendered
+ok 10 - hidden painted art is not rendered
+  ---
+  duration_ms: 2.2598
+  type: 'test'
+  ...
+# Subtest: arch is gone
+ok 11 - arch is gone
+  ---
+  duration_ms: 3.5348
+  type: 'test'
+  ...
+# Subtest: nikah programme still has a marker per step
+ok 12 - nikah programme still has a marker per step
+  ---
+  duration_ms: 1.3956
+  type: 'test'
+  ...
+# Subtest: no speaker without a track
+ok 13 - no speaker without a track
+  ---
+  duration_ms: 0.4322
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 110.7003
+
+> amir-ariza-wedding@1.0.0 test:e2e
+> node --experimental-strip-types --test --test-concurrency=1 "tests/e2e/**/*.test.mjs"
+
+TAP version 13
+# Subtest: tap starts music
+ok 1 - tap starts music
+  ---
+  duration_ms: 5251.315
+  type: 'test'
+  ...
+# Subtest: button mutes
+ok 2 - button mutes
+  ---
+  duration_ms: 4538.7451
+  type: 'test'
+  ...
+# Subtest: return visit stays silent until the speaker is tapped
+ok 3 - return visit stays silent until the speaker is tapped
+  ---
+  duration_ms: 2760.9147
+  type: 'test'
+  ...
+# Subtest: first visit waits for a tap
+ok 4 - first visit waits for a tap
+  ---
+  duration_ms: 3675.3838
+  type: 'test'
+  ...
+# Subtest: hero holds its entrance until the letter arrives
+ok 5 - hero holds its entrance until the letter arrives
+  ---
+  duration_ms: 9091.903
+  type: 'test'
+  ...
+# Subtest: tap opens into the hero
+ok 6 - tap opens into the hero
+  ---
+  duration_ms: 4520.9603
+  type: 'test'
+  ...
+# Subtest: keyboard opens it
+ok 7 - keyboard opens it
+  ---
+  duration_ms: 4523.184
+  type: 'test'
+  ...
+# Subtest: double tap runs once
+ok 8 - double tap runs once
+  ---
+  duration_ms: 5392.5253
+  type: 'test'
+  ...
+# Subtest: storage blocked still opens
+ok 9 - storage blocked still opens
+  ---
+  duration_ms: 4749.4478
+  type: 'test'
+  ...
+# Subtest: envelope paints without images
+ok 10 - envelope paints without images
+  ---
+  duration_ms: 288.295
+  type: 'test'
+  ...
+# Subtest: laptop keeps envelope phone-sized
+ok 11 - laptop keeps envelope phone-sized
+  ---
+  duration_ms: 4549.1666
+  type: 'test'
+  ...
+# Subtest: no JavaScript shows the page
+ok 12 - no JavaScript shows the page
+  ---
+  duration_ms: 361.2796
+  type: 'test'
+  ...
+# Subtest: return visit opens by itself
+ok 13 - return visit opens by itself
+  ---
+  duration_ms: 2700.338
+  type: 'test'
+  ...
+# Subtest: reduced motion fades
+ok 14 - reduced motion fades
+  ---
+  duration_ms: 1208.5745
+  type: 'test'
+  ...
+# Subtest: reduced motion return visit
+ok 15 - reduced motion return visit
+  ---
+  duration_ms: 1565.7044
+  type: 'test'
+  ...
+# Subtest: hash link lands on its section
+ok 16 - hash link lands on its section
+  ---
+  duration_ms: 5091.4915
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 66696.0031

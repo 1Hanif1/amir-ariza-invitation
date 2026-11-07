@@ -1,0 +1,31 @@
+// Scratch: the pill navigation. node .superpowers/navshot.mjs <outdir> <w> <h> <tag>
+import puppeteer from 'puppeteer-core';
+import { startPreview } from '../tests/e2e/harness.mjs';
+const [out, w, h, tag] = process.argv.slice(2);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const preview = await startPreview(4335);
+const browser = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe' });
+const page = await browser.newPage();
+const errors = [];
+page.on('pageerror', (e) => errors.push(e.message));
+await page.setViewport({ width: Number(w), height: Number(h) });
+await page.evaluateOnNewDocument(() => localStorage.setItem('aa-envelope-opened', '1'));
+await page.goto(preview.url, { waitUntil: 'networkidle0' });
+await page.waitForFunction(() => !document.getElementById('opening'), { timeout: 8000 });
+await sleep(2500);
+await page.screenshot({ path: `${out}/${tag}-1-top.png` });
+await page.mouse.move(Number(w) / 2, Number(h) / 2);
+for (let i = 0; i < 8; i++) { await page.mouse.wheel({ deltaY: 300 }); await sleep(80); }
+await sleep(1200);
+const down = await page.evaluate(() => [scrollY, document.querySelector('[data-nav]').dataset.state]);
+await page.mouse.wheel({ deltaY: -200 });
+await sleep(1200);
+const up = await page.evaluate(() => [scrollY, document.querySelector('[data-nav]').dataset.state]);
+await page.screenshot({ path: `${out}/${tag}-2-up.png` });
+await page.click('a.pill__link[href="#celebrations"]');
+await sleep(2200);
+const landed = await page.evaluate(() => ({ top: Math.round(document.getElementById('celebrations').getBoundingClientRect().top), state: document.querySelector('[data-nav]').dataset.state, current: document.querySelector('[aria-current]')?.textContent.trim() }));
+await page.screenshot({ path: `${out}/${tag}-3-link.png` });
+console.log(JSON.stringify({ down, up, landed, lenis: await page.evaluate(() => document.documentElement.className), errors }));
+await browser.close();
+await preview.stop();
