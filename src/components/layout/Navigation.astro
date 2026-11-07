@@ -1,26 +1,37 @@
 ---
+/**
+ * The floating navigation: a small parchment pill, edged like the hero's arch (a saffron rule
+ * inside a hairline teal ring). It stays out of sight on the first screen, drops in once the
+ * guest scrolls past it, tucks away while they scroll down and returns when they scroll up.
+ * A saffron bead glides under the section in view (MainLayout's tracker marks it aria-current).
+ * The monogram takes the guest back to the top, so "Home" is not repeated as a word.
+ */
 import { navigation } from '../../data/wedding';
 import Art from '../decorative/Art.astro';
+
+const links = navigation.filter((item) => item.href !== '#home');
 ---
 
 <a href="#celebrations" class="skip">Skip to event details</a>
 
-<header class="nav">
-  <nav aria-label="Main" class="nav__inner">
-    <a href="#home" class="nav__mark" aria-label="Amir and Ariza, back to top" tabindex="-1">
-      <Art name="aa-monogram" class="nav__monogram" eager />
+<header class="nav" data-nav data-state="hidden">
+  <nav aria-label="Main" class="pill">
+    <a href="#home" class="pill__mark" aria-label="Back to the top">
+      <Art name="aa-monogram" class="pill__monogram" eager />
     </a>
-    <ul class="nav__links">
+    <span class="pill__rule" aria-hidden="true"></span>
+    <ul class="pill__links">
       {
-        navigation.map((item) => (
+        links.map((item) => (
           <li>
-            <a href={item.href} data-nav-link class="nav__link">
+            <a href={item.href} data-nav-link class="pill__link">
               {item.label}
             </a>
           </li>
         ))
       }
     </ul>
+    <span class="pill__bead" aria-hidden="true"></span>
   </nav>
 </header>
 
@@ -40,71 +51,184 @@ import Art from '../decorative/Art.astro';
   }
 
   .nav {
-    position: sticky;
-    top: 0;
+    position: fixed;
+    top: max(0.75rem, env(safe-area-inset-top));
+    left: 50%;
     z-index: 50;
-    height: var(--nav-height);
-    background: color-mix(in srgb, var(--color-parchment) 94%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    /* Its own width, not the half-screen that left: 50% would allow it. */
+    width: max-content;
+    max-width: calc(100vw - 1.5rem);
+    translate: -50% 0;
+    transition:
+      translate 650ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 450ms ease;
   }
 
-  .nav__inner {
+  /* Out of sight above the screen. Keyboard focus inside brings it back. */
+  .nav[data-state='hidden']:not(:focus-within) {
+    translate: -50% calc(-100% - 1.75rem);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pill {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 100%;
-    max-width: 75rem;
-    margin-inline: auto;
-    padding-inline: 0.5rem;
+    padding: 0.25rem 0.4rem 0.25rem 0.3rem;
+    border: 1.5px solid var(--color-saffron);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-parchment) 84%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(1.15);
+    backdrop-filter: blur(12px) saturate(1.15);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-ivory) 75%, transparent),
+      0 0 0 4px color-mix(in srgb, var(--color-teal) 60%, transparent),
+      0 14px 30px -12px rgb(89 68 55 / 0.35);
   }
 
-  .nav__mark {
-    display: none;
+  .pill__mark {
+    display: block;
+    flex: none;
+    padding: 0.25rem;
+    border-radius: 50%;
   }
 
-  .nav__links {
+  .pill__monogram {
+    display: block;
+    width: auto;
+    height: 2.125rem;
+  }
+
+  .pill__rule {
+    flex: none;
+    width: 1px;
+    height: 1.5rem;
+    margin-inline: 0.2rem 0.1rem;
+    background: color-mix(in srgb, var(--color-saffron) 80%, transparent);
+  }
+
+  .pill__links {
     display: flex;
-    list-style: none;
     margin: 0;
     padding: 0;
-    gap: 0.125rem;
+    list-style: none;
   }
 
-  /* Four words fit on one line on the narrowest phones, so no menu needs opening. */
-  .nav__link {
+  .pill__link {
     display: flex;
     align-items: center;
     min-height: 2.75rem;
-    padding-inline: clamp(0.4rem, 2.2vw, 1rem);
-    font-size: clamp(0.8125rem, 3.5vw, 0.9375rem);
+    padding-inline: clamp(0.45rem, 2.4vw, 0.95rem);
+    font-family: var(--font-display);
+    font-size: clamp(0.9688rem, 4.1vw, 1.1875rem);
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
     text-decoration: none;
     color: var(--color-ink);
-    background-image: linear-gradient(var(--color-burgundy), var(--color-burgundy));
-    background-repeat: no-repeat;
-    background-position: 50% 80%;
-    background-size: 0 1px;
-    transition: background-size 250ms ease;
+    transition: color 300ms ease;
   }
 
-  .nav__link:hover,
-  .nav__link[aria-current] {
-    background-size: calc(100% - 2 * clamp(0.4rem, 2.2vw, 1rem)) 1px;
+  .pill__link:hover,
+  .pill__link[aria-current] {
+    color: var(--color-burgundy);
   }
 
-  @media (min-width: 48rem) {
-    .nav__inner {
-      justify-content: space-between;
-      padding-inline: 1.5rem;
-    }
+  /* The bead: a small saffron lozenge that glides to the section in view. */
+  .pill__bead {
+    position: absolute;
+    left: 0;
+    bottom: 0.3rem;
+    width: 5px;
+    height: 5px;
+    background: var(--color-saffron);
+    rotate: 45deg;
+    translate: var(--bead-x, 0) 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
 
-    .nav__mark {
-      display: block;
-    }
+  .pill__bead.is-placed {
+    opacity: 1;
+  }
 
-    .nav__monogram {
-      display: block;
-      width: auto;
-      height: 2.5rem;
+  .pill__bead.is-gliding {
+    transition:
+      translate 550ms cubic-bezier(0.3, 0.7, 0.2, 1),
+      opacity 300ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav,
+    .pill__bead.is-gliding {
+      transition: opacity 200ms ease;
     }
   }
 </style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const bead = nav?.querySelector<HTMLElement>('.pill__bead');
+  const links = [...(nav?.querySelectorAll<HTMLAnchorElement>('[data-nav-link]') ?? [])];
+
+  if (nav && bead) {
+    // Shown or hidden as the guest scrolls.
+    let lastY = window.scrollY;
+    let pinnedUntil = 0;
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      const y = window.scrollY;
+      const delta = y - lastY;
+      lastY = y;
+
+      let state = nav.dataset.state;
+      if (y < window.innerHeight * 0.6) state = 'hidden';
+      else if (performance.now() < pinnedUntil) state = 'shown';
+      else if (delta > 4) state = 'hidden';
+      else if (delta < -4) state = 'shown';
+      nav.dataset.state = state;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(update);
+      },
+      { passive: true },
+    );
+    update();
+
+    // After a tap on a link, stay in view while the page glides down to the section.
+    nav.addEventListener('click', (event) => {
+      if ((event.target as Element).closest('a')) pinnedUntil = performance.now() + 1800;
+    });
+
+    // The bead follows whichever link is marked as the section in view.
+    const place = () => {
+      const current = links.find((link) => link.hasAttribute('aria-current'));
+      if (!current) {
+        bead.classList.remove('is-placed');
+        return;
+      }
+      const x = current.offsetLeft + current.offsetWidth / 2 - bead.offsetWidth / 2;
+      bead.style.setProperty('--bead-x', `${x}px`);
+      // The first placement jumps straight there; after that it glides.
+      if (bead.classList.contains('is-placed')) bead.classList.add('is-gliding');
+      bead.classList.add('is-placed');
+    };
+
+    new MutationObserver(place).observe(nav, { subtree: true, attributes: true, attributeFilter: ['aria-current'] });
+    window.addEventListener('resize', place);
+    document.fonts?.ready.then(place);
+  }
+</script>
+
+<script>
+  import '../../scripts/smooth-scroll';
+</script>

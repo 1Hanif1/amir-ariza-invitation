@@ -39,8 +39,12 @@ async function assertHandedBack(page, { storage = true } = {}) {
 test('first visit waits for a tap', async () => {
   const page = await openPage(browser, preview.url);
   await sleep(3000);
+  // A guest trying to scroll past the envelope: the wheel, then the keyboard.
+  await page.mouse.move(200, 300);
+  await page.mouse.wheel({ deltaY: 600 });
+  await page.keyboard.press('PageDown');
+  await sleep(800);
   const state = await page.evaluate(() => {
-    window.scrollTo(0, 500);
     const opening = document.getElementById('opening');
     return {
       present: !!opening,

@@ -50,11 +50,12 @@
   :root {
     /* The hero and invitation share one arch, so their content is measured against it. */
     --arch-width: min(100vw - 1rem, max(36rem, min(62rem, 122vh)));
+    /* The floating navigation's height; sections landed on by a link leave this much room, plus a margin. */
     --nav-height: 3rem;
   }
 
   html {
-    scroll-padding-top: calc(var(--nav-height) + 0.75rem);
+    scroll-padding-top: calc(var(--nav-height) + 1.75rem);
     -webkit-text-size-adjust: 100%;
   }
 

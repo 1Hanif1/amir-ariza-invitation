@@ -103,3 +103,8 @@ html.opening-running .nav {
 .nav {
   transition: opacity 700ms ease;
 }
+
+/* Lenis does its own easing, frame by frame; the browser's smooth scrolling would fight it. */
+html.lenis {
+  scroll-behavior: auto;
+}
